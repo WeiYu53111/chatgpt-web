@@ -5,10 +5,14 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
+import { User } from './routes/user';
 
+//const cors = require('cors')
 const app = express()
+const user = new User();
 const router = express.Router()
 
+//app.use(cors())
 app.use(express.static('public'))
 app.use(express.json())
 
@@ -18,6 +22,7 @@ app.all('*', (_, res, next) => {
   res.header('Access-Control-Allow-Methods', '*')
   next()
 })
+
 
 router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
@@ -82,8 +87,12 @@ router.post('/verify', async (req, res) => {
   }
 })
 
+
+
+
 app.use('', router)
 app.use('/api', router)
+app.use('/user', user.getRouter());
 app.set('trust proxy', 1)
 
 app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
