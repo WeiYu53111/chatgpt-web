@@ -1,101 +1,166 @@
 <template>
-	<div class="register-page">
-		<n-form :model="formData" :rules="rules" v-bind="formAttrs" id="login-form">
-			<n-form-item label="用户名" label-for="username">
-				<n-input id="username" v-model="formData.username" placeholder="请输入用户名" clearable />
-			</n-form-item>
 
-			<n-form-item label="邮箱" label-for="email">
-				<n-input id="email" v-model="formData.email" placeholder="请输入邮箱" clearable />
-			</n-form-item>
-
-			<n-form-item label="密码" label-for="password">
-				<n-input
-					id="password"
+	<div style="margin: 0 auto;width: 30%">
+		<NForm ref="formRef" :model="model" :rules="rules">
+			<NFormItem path="age" label="用户名">
+				<NInput v-model:value="model.username" @keydown.enter.prevent/>
+			</NFormItem>
+			<NFormItem path="password" label="密码">
+				<NInput
+					v-model:value="model.password"
 					type="password"
-					v-model="formData.password"
-					placeholder="请输入密码"
-					clearable
+					@input="handlePasswordInput"
+					@keydown.enter.prevent
 				/>
-			</n-form-item>
+			</NFormItem>
+			<NFormItem
+				ref="rPasswordFormItemRef"
+				first
+				path="reenteredPassword"
+				label="重复密码"
+			>
+				<NInput
+					v-model:value="model.reenteredPassword"
+					:disabled="!model.password"
+					type="password"
+					@keydown.enter.prevent
+				/>
+			</NFormItem>
+			<NRow :gutter="[0, 24]">
+				<NCol :span="24">
+					<div style="display: flex; justify-content: flex-end">
+						<NButton
+							:disabled="model.username === null"
+							round
+							type="primary"
+							@click="handleValidateButtonClick"
+						>
+							提交
+						</NButton>
+					</div>
+				</NCol>
+			</NRow>
+		</NForm>
 
-			<n-input id="msg" v-model="message" placeholder="message" clearable />
 
-			<n-button type="primary" @click="submitForm">提交</n-button>
+		<pre>{{ JSON.stringify(model, null, 2) }}
+</pre>
 
-			<pre>{{ formData }}</pre>
-			<pre>{{ message }}</pre>
-		</n-form>
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import {defineComponent, ref} from 'vue'
+import {post} from "@/utils/request";
+import {
+	FormInst,
+	FormItemInst,
+	FormItemRule,
+	FormRules,
+	NButton,
+	NCol,
+	NForm,
+	NFormItem,
+	NInput,
+	NRow,
+	useMessage
+} from 'naive-ui'
 
-import { ref } from 'vue';
-import { NButton, NForm, NFormItem, NInput } from 'naive-ui';
-import ApiClient from "../../utils/request/httpClient";
-import {UserSpace} from "../../typings/user"
 
-export default {
-	name: 'Register',
+interface ModelType {
+	username: string | null
+	password: string | null
+	reenteredPassword: string | null
+}
 
+
+export default defineComponent({
 	components: {
-		NButton,
-		NForm,
-		NFormItem,
-		NInput,
+		NForm, NRow, NCol, NButton, NFormItem, NInput
 	},
-
 	setup() {
+		const formRef = ref<FormInst | null>(null)
+		const rPasswordFormItemRef = ref<FormItemInst | null>(null)
+		const message = useMessage()
+		const modelRef = ref<ModelType>({
+			username: null,
+			password: null,
+			reenteredPassword: null
+		})
 
-		const message = ref(1);
+		function validatePasswordStartWith(
+			rule: FormItemRule,
+			value: string
+		): boolean {
+			return (
+				!!modelRef.value.password &&
+				modelRef.value.password.startsWith(value) &&
+				modelRef.value.password.length >= value.length
+			)
+		}
 
-		const formData = ref({
-			username: '',
-			email: '',
-			password: '',
-		});
+		function validatePasswordSame(rule: FormItemRule, value: string): boolean {
+			return value === modelRef.value.password
+		}
 
-		const apiClient = new ApiClient('http://localhost:3002');
-
-		const rules = {
-			username: [{ required: true, message: '用户名不能为空' }],
-			email: [
-				{ required: true, message: '邮箱不能为空' },
-				{ type: 'email', message: '邮箱格式不正确' },
+		const rules: FormRules = {
+			username: [
+				{
+					required: true,
+					trigger: ['input', 'blur']
+				}
 			],
-			password: [{ required: true, message: '密码不能为空' }],
-		};
-
-		const formAttrs = {
-			ref: 'form',
-			labelPosition: 'top',
-		};
-
-		const submitForm = async () => {
-			//const form = document.getElementById('login-form');
-			//const valid = await form.validateForm();
-			if (true) {
-					try {
-						const user = await apiClient.post<UserSpace.User>('/user/new', formData.value);
-						console.log(user);
-					} catch (error) {
-						console.log(error);
+			password: [
+				{
+					required: true,
+					message: '请输入密码'
+				}
+			],
+			reenteredPassword: [
+				{
+					required: true,
+					message: '请再次输入密码',
+					trigger: ['input', 'blur']
+				},
+				{
+					validator: validatePasswordStartWith,
+					message: '两次密码输入不一致',
+					trigger: 'input'
+				},
+				{
+					validator: validatePasswordSame,
+					message: '两次密码输入不一致',
+					trigger: ['blur', 'password-input']
+				}
+			]
+		}
+		return {
+			formRef,
+			rPasswordFormItemRef,
+			model: modelRef,
+			rules,
+			handlePasswordInput() {
+				if (modelRef.value.reenteredPassword) {
+					rPasswordFormItemRef.value?.validate({trigger: 'password-input'})
+				}
+			},
+			handleValidateButtonClick(e: MouseEvent) {
+				e.preventDefault()
+				formRef.value?.validate((errors) => {
+					if (!errors) {
+						//发起请求
+						post<T>({
+							url: '/user/new',
+							data: modelRef.value,
+						})
+					} else {
+						console.log(errors)
+						message.error('验证失败')
 					}
-			} else {
-					console.log('表单验证失败');
+				})
 			}
-		};
-
-		return { formData, rules, formAttrs, submitForm,message };
-	},
-};
+		}
+	}
+})
 </script>
 
-<style scoped>
-.register-page {
-	max-width: 400px;
-	margin: 0 auto;
-	padding: 32px;
-}
-</style>
