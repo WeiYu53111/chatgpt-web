@@ -1,81 +1,113 @@
 <template>
-	<div class="login-page">
-		<n-form :model="formData" :rules="rules" v-bind="formAttrs">
-			<n-form-item label="用户名" label-for="username">
-				<n-input id="username" v-model="formData.username" placeholder="请输入用户名" clearable />
-			</n-form-item>
-
-			<n-form-item label="密码" label-for="password">
-				<n-input
-					id="password"
+	<div style="margin: 0 auto;width: 30%">
+		<NForm ref="formRef" :model="model" :rules="rules">
+			<NFormItem path="age" label="用户名">
+				<NInput v-model:value="model.username" @keydown.enter.prevent/>
+			</NFormItem>
+			<NFormItem path="password" label="密码">
+				<NInput
+					v-model:value="model.password"
 					type="password"
-					v-model="formData.password"
-					placeholder="请输入密码"
-					clearable
+					@keydown.enter.prevent
 				/>
-			</n-form-item>
-			<div class="btn-area">
-				<n-button type="primary" @click="submitForm">登录</n-button>
-				<router-link to="/register">
-					<n-button>注册</n-button>
-				</router-link>
+			</NFormItem>
+			<NRow :gutter="[0, 24]">
+				<NCol :span="24">
+					<div style="display: flex; justify-content: flex-end">
+						<NButton
+							:disabled="model.username === null"
+							round
+							type="primary"
+							@click="handleValidateButtonClick"
+						>
+							提交
+						</NButton>
+					</div>
+				</NCol>
+			</NRow>
+		</NForm>
+<!--		<pre>{{ JSON.stringify(model, null, 2) }}
+		</pre>-->
+		<router-link to="/room">chat room </router-link>
 
-			</div>
-
-		</n-form>
 	</div>
 </template>
 
-<script>
-import axios from 'axios';
-import { ref } from 'vue';
-import { NButton, NForm, NFormItem, NInput } from 'naive-ui';
+<script lang="ts">
 
-export default {
-	name: 'Login',
+import {defineComponent, ref} from 'vue'
+//import {post} from "@/utils/request";
+import {
+	FormInst,
+	FormItemRule,
+	FormRules,
+	NButton,
+	NCol,
+	NForm,
+	NFormItem,
+	NInput,
+	NRow,
+	useMessage
+} from 'naive-ui'
 
+
+interface ModelType {
+	username: string | null
+	password: string | null
+}
+
+
+export default defineComponent({
 	components: {
-		NButton,
-		NForm,
-		NFormItem,
-		NInput,
+		NForm, NRow, NCol, NButton, NFormItem, NInput
 	},
-
 	setup() {
-		const formData = ref({
-			username: '',
-			password: '',
-		});
-
-		const rules = {
-			username: [{ required: true, message: '用户名不能为空' }],
-			password: [{ required: true, message: '密码不能为空' }],
-		};
-
-		const formAttrs = {
-			ref: 'form',
-			labelPosition: 'top',
-		};
-
-		const submitForm = async () => {
-			const form = document.getElementById('login-form');
-			await form.validate(async (valid) => {
-				if (valid) {
-					try {
-						await axios.post('http://localhost:3002/user/login', formData.value);
-						// 跳转到首页或其他页面
-					} catch (error) {
-						console.log(error);
-					}
-				} else {
-					console.log('表单验证失败');
+		const formRef = ref<FormInst | null>(null)
+		const message = useMessage()
+		const modelRef = ref<ModelType>({
+			username: null,
+			password: null
+		})
+		function checkPasswordInput(rule: FormItemRule,
+																 value: string):boolean {
+			return !!modelRef.value.password && modelRef.value.password.length > 3
+		}
+		const rules: FormRules = {
+			username: [
+				{
+					required: true,
+					trigger: ['input', 'blur']
 				}
-			});
-		};
+			],
+			password: [
+				{
+					required: true,
+					message: '请输入密码',
+					validator: checkPasswordInput,
+					trigger: ["input","blur"]
+				}
+			],
+		}
+		return {
+			formRef,
+			model: modelRef,
+			rules,
+			handleValidateButtonClick(e: MouseEvent) {
+				e.preventDefault()
+				formRef.value?.validate((errors) => {
+					if (!errors) {
+						message.success('验证成功')
+					} else {
+						console.log(errors)
+						message.error('验证失败')
+					}
+				})
+			}
+		}
+	}
+})
 
-		return { formData, rules, formAttrs, submitForm };
-	},
-};
+
 </script>
 
 <style scoped>

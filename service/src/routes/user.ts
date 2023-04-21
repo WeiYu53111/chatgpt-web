@@ -18,9 +18,10 @@ export class User {
 			this.getUserById(req, res);
 		});
 		this.router.post('/new', (req: Request, res: Response) => {
+			console.log(req)
 			this.createUser(req, res);
 		});
-		this.router.put('/update/:id', (req: Request, res: Response) => {
+		this.router.post('/update/:id', (req: Request, res: Response) => {
 			this.updateUser(req, res);
 		});
 	}
