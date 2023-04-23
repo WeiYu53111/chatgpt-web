@@ -137,7 +137,7 @@ export default defineComponent({
 		return {
 			formRef,
 			rPasswordFormItemRef,
-			model: modelRef,
+			userInfo: modelRef,
 			rules,
 			handlePasswordInput() {
 				if (modelRef.value.reenteredPassword) {
@@ -149,7 +149,7 @@ export default defineComponent({
 				formRef.value?.validate((errors) => {
 					if (!errors) {
 						//发起请求
-						post<T>({
+						post<any>({
 							url: '/user/new',
 							data: modelRef.value,
 						})

@@ -1,12 +1,12 @@
 <template>
-	<div style="margin: 0 auto;width: 30%">
-		<NForm ref="formRef" :model="model" :rules="rules">
+	<div class="login-page">
+		<NForm ref="formRef" :model="userInfo" :rules="rules">
 			<NFormItem path="age" label="用户名">
-				<NInput v-model:value="model.username" @keydown.enter.prevent/>
+				<NInput v-model:value="userInfo.username" @keydown.enter.prevent/>
 			</NFormItem>
 			<NFormItem path="password" label="密码">
 				<NInput
-					v-model:value="model.password"
+					v-model:value="userInfo.password"
 					type="password"
 					@keydown.enter.prevent
 				/>
@@ -15,20 +15,16 @@
 				<NCol :span="24">
 					<div style="display: flex; justify-content: flex-end">
 						<NButton
-							:disabled="model.username === null"
+							:disabled="userInfo.username === null"
 							round
 							type="primary"
 							@click="handleValidateButtonClick"
-						>
-							提交
+						>登录
 						</NButton>
 					</div>
 				</NCol>
 			</NRow>
 		</NForm>
-<!--		<pre>{{ JSON.stringify(model, null, 2) }}
-		</pre>-->
-		<router-link to="/room">chat room </router-link>
 
 	</div>
 </template>
@@ -36,7 +32,6 @@
 <script lang="ts">
 
 import {defineComponent, ref} from 'vue'
-//import {post} from "@/utils/request";
 import {
 	FormInst,
 	FormItemRule,
@@ -50,11 +45,8 @@ import {
 	useMessage
 } from 'naive-ui'
 
-
-interface ModelType {
-	username: string | null
-	password: string | null
-}
+import {login, UserInfo} from '@/api/user'
+import {router} from "@/router";
 
 
 export default defineComponent({
@@ -64,14 +56,34 @@ export default defineComponent({
 	setup() {
 		const formRef = ref<FormInst | null>(null)
 		const message = useMessage()
-		const modelRef = ref<ModelType>({
-			username: null,
-			password: null
+		const modelRef = ref<UserInfo>({
+			username: "111111",
+			password: "111111"
 		})
+
 		function checkPasswordInput(rule: FormItemRule,
-																 value: string):boolean {
+																value: string): boolean {
 			return !!modelRef.value.password && modelRef.value.password.length > 3
 		}
+
+		async function handleValidateButtonClick(e: MouseEvent) {
+			e.preventDefault()
+			formRef.value?.validate((errors) => {
+				if (!errors) {
+					//发起请求
+					try {
+						login(modelRef.value)
+						message.success("登录成功,正在前往聊天室.")
+						router.push("/chat")
+					} catch (error: any) {
+						message.error(error.message ?? 'error')
+					}
+				} else {
+					console.log(errors)
+				}
+			})
+		}
+
 		const rules: FormRules = {
 			username: [
 				{
@@ -82,27 +94,17 @@ export default defineComponent({
 			password: [
 				{
 					required: true,
-					message: '请输入密码',
+					message: '密码错误',
 					validator: checkPasswordInput,
-					trigger: ["input","blur"]
+					trigger: ["input", "blur"]
 				}
 			],
 		}
 		return {
 			formRef,
-			model: modelRef,
+			userInfo: modelRef,
 			rules,
-			handleValidateButtonClick(e: MouseEvent) {
-				e.preventDefault()
-				formRef.value?.validate((errors) => {
-					if (!errors) {
-						message.success('验证成功')
-					} else {
-						console.log(errors)
-						message.error('验证失败')
-					}
-				})
-			}
+			handleValidateButtonClick,
 		}
 	}
 })
@@ -111,15 +113,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 .login-page {
-	max-width: 400px;
-	margin: 0 auto;
-	padding: 32px;
-}
-
-
-.btn-area {
 	display: flex;
-	justify-content: space-between;
+	margin: 0 auto;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	border: 1px solid black;
 }
+
 </style>

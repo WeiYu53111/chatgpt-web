@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
-import { Database } from '../db/db';
-export class User {
+import { Database,User } from '../db/db';
+
+export class UserManager {
 	private router: Router;
 	private db: Database;
 
@@ -14,8 +15,8 @@ export class User {
 		this.router.post('/all', (req: Request, res: Response) => {
 			this.getAllUsers(req, res);
 		});
-		this.router.post('/query/:id', (req: Request, res: Response) => {
-			this.getUserById(req, res);
+		this.router.post('/login', (req: Request, res: Response) => {
+			this.getUserByName(req, res);
 		});
 		this.router.post('/new', (req: Request, res: Response) => {
 			console.log(req)
@@ -36,17 +37,21 @@ export class User {
 		}
 	}
 
-	private async getUserById(req: Request, res: Response): Promise<void> {
+	private async getUserByName(req: Request, res: Response): Promise<void> {
 		try {
-			const row: any = await this.db.getUserById(req.params.id);
+			const data = req.body;
+			const row: User = await this.db.getUserByName(data.username);
 			if (row) {
-				res.json(row);
+				res.json({
+					data:row,
+					message: "登录成功",
+					status: "Success"
+				});
 			} else {
-				res.status(404).send('User not found');
+				res.send({ status: 'Fail', message: "User not found", data: null })
 			}
 		} catch (err) {
-			console.error(err);
-			res.status(500).send('Internal server error');
+			res.send({ status: 'Fail', message: err.message, data: null })
 		}
 	}
 

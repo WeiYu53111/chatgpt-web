@@ -1,9 +1,7 @@
 import sqlite3 from 'sqlite3';
 
-interface User {
-	id: string;
+export interface User {
 	name: string;
-	email: string;
 	password: string;
 }
 
@@ -29,10 +27,10 @@ class Database {
 		});
 	}
 
-	public getUserById(id: string): Promise<User> {
-		const sql = 'SELECT * FROM users WHERE id = ?';
+	public getUserByName(usename: string): Promise<User> {
+		const sql = 'SELECT * FROM users WHERE username = ?';
 		return new Promise((resolve, reject) => {
-			this.db.get(sql, [id], (err: Error | null, row: User) => {
+			this.db.get(sql, [usename], (err: Error | null, row: User) => {
 				if (err) {
 					reject(err);
 				} else {

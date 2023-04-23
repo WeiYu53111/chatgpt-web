@@ -5,11 +5,13 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
-import { User } from './routes/user';
+import { UserManager } from './routes/user';
+
+import { Request, Response, NextFunction } from 'express';
 
 //const cors = require('cors')
 const app = express()
-const user = new User();
+const user = new UserManager();
 const router = express.Router()
 
 //app.use(cors())
@@ -23,6 +25,33 @@ app.all('*', (_, res, next) => {
   next()
 })
 
+
+// 拦截器中间件函数
+const interceptor = (req: Request, res: Response, next: NextFunction) => {
+
+	// 在这里编写您的逻辑，例如检查请求头或身份验证等
+	if(req.path.startsWith("/user")){
+
+		console.log()
+		const params = req.params;
+		const query = req.query;
+		const body = req.body;
+		const path = req.path;
+		console.log({
+			params:params,
+			query:query,
+			body:body,
+			path:path
+		})
+	}
+	// 如果需要终止请求并返回响应，可以像下面这样：
+	// return res.status(401).send('Unauthorized');
+
+	// 否则，调用next()继续传递请求
+	next();
+};
+
+app.use(interceptor)
 
 router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
@@ -92,7 +121,7 @@ router.post('/verify', async (req, res) => {
 
 app.use('', router)
 app.use('/api', router)
-app.use('/api/user', user.getRouter());
+app.use('/user', user.getRouter());
 app.set('trust proxy', 1)
 
 app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
