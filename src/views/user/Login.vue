@@ -1,57 +1,58 @@
 <template>
-	<div class="login-page">
-		<NForm ref="formRef" :model="userInfo" :rules="rules">
-			<NFormItem path="age" label="用户名">
-				<NInput v-model:value="userInfo.username" @keydown.enter.prevent/>
-			</NFormItem>
-			<NFormItem path="password" label="密码">
-				<NInput
-					v-model:value="userInfo.password"
-					type="password"
-					@keydown.enter.prevent
-				/>
-			</NFormItem>
-			<NRow :gutter="[0, 24]">
-				<NCol :span="24">
-					<div style="display: flex; justify-content: flex-end">
-						<NButton
-							:disabled="userInfo.username === null"
-							round
-							type="primary"
-							@click="handleValidateButtonClick"
-						>登录
-						</NButton>
-					</div>
-				</NCol>
-			</NRow>
-		</NForm>
+	<div class="flex justify-center align-center">
+	<NSpace>
+		<NLayout>
+			<NLayoutHeader>
+				<Header></Header>
+			</NLayoutHeader>
+			<NLayoutContent content-style="padding: 24px;">
+				<NCard title="">
+					<NForm ref="formRef" :model="userInfo" :rules="rules">
+						<NFormItem path="username" label="用户名" class="w-80">
+							<NInput v-model:value="userInfo.username" @keydown.enter.prevent/>
+						</NFormItem>
+						<NFormItem path="password" label="密码" class="w-80">
+							<NInput
+								v-model:value="userInfo.password"
+								type="password"
+								@keydown.enter.prevent
+							/>
+						</NFormItem>
+						<NRow :gutter="[0, 24]">
+							<NCol :span="24">
+								<div style="display: flex; justify-content: flex-end">
+									<NButton
+										:disabled="userInfo.username === null"
+										round
+										type="primary"
+										@click="handleValidateButtonClick"
+									>登录
+									</NButton>
+								</div>
+							</NCol>
+						</NRow>
+					</NForm>
+				</NCard>
+			</NLayoutContent>
+			<NLayoutFooter>footer</NLayoutFooter>
+		</NLayout>
 
+	</NSpace>
 	</div>
 </template>
 
 <script lang="ts">
 
 import {defineComponent, ref} from 'vue'
-import {
-	FormInst,
-	FormItemRule,
-	FormRules,
-	NButton,
-	NCol,
-	NForm,
-	NFormItem,
-	NInput,
-	NRow,
-	useMessage
-} from 'naive-ui'
-
+import {FormInst, FormItemRule, FormRules, NButton, NCol, NForm, NFormItem, NInput, NRow, useMessage,NCard,NSpace} from 'naive-ui'
+import Header from '@/components/login/Header.vue'
 import {login, UserInfo} from '@/api/user'
 import {router} from "@/router";
 
 
 export default defineComponent({
 	components: {
-		NForm, NRow, NCol, NButton, NFormItem, NInput
+		NForm, NRow, NCol, NButton, NFormItem, NInput,NCard,NSpace,Header
 	},
 	setup() {
 		const formRef = ref<FormInst | null>(null)
@@ -115,12 +116,6 @@ export default defineComponent({
 <style scoped>
 
 .login-page {
-	display: flex;
-	margin: 0 auto;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	border: 1px solid black;
 }
 
 </style>
