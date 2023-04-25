@@ -19,7 +19,7 @@ export class UserManager {
 			this.getUserByName(req, res);
 		});
 		this.router.post('/new', (req: Request, res: Response) => {
-			console.log(req)
+			//console.log(req)
 			this.createUser(req, res);
 		});
 		this.router.post('/update/:id', (req: Request, res: Response) => {

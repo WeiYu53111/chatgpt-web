@@ -27,3 +27,13 @@ export function register<T>(data:UserInfo){
 		data: data,
 	})
 }
+
+export function sendEmailCode<T>(email:string){
+	//发起请求
+	return post<string>({
+		url: '/service/sendEmailCode',
+		data: {
+			email:email
+		},
+	})
+}

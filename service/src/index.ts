@@ -6,12 +6,14 @@ import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
 import { UserManager } from './routes/user';
+import { CommonManager } from './routes/common';
 
 import { Request, Response, NextFunction } from 'express';
 
 //const cors = require('cors')
 const app = express()
 const user = new UserManager();
+const commonSevice = new CommonManager()
 const router = express.Router()
 
 //app.use(cors())
@@ -119,9 +121,11 @@ router.post('/verify', async (req, res) => {
 
 
 
+
 app.use('', router)
 app.use('/api', router)
 app.use('/user', user.getRouter());
+app.use('/service',commonSevice.getRouter())
 app.set('trust proxy', 1)
 
 app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))

@@ -8,10 +8,10 @@
 				<NLayoutContent content-style="padding: 24px;">
 					<NSpace vertical>
 						<div>
-							<NCard style="border: 0px; width: 300px;height: 400px; background-color: white;">
-<!--								<template #cover>
+							<NCard style="border: 0px;">
+								<template #cover>
 									<img src="/public/pwa-192x192.png" class="logo">
-								</template>-->
+								</template>
 							</NCard>
 						</div>
 						<RegisterForm></RegisterForm>
@@ -28,4 +28,12 @@ import RegisterForm from "@/components/login/RegisterForm.vue";
 import {NCard,NSpace,NLayout,NLayoutFooter,NLayoutContent,NLayoutHeader} from 'naive-ui'
 
 </script>
+<style>
+.logo {
+	max-width: 200px; max-height: 200px;border-radius: 50%; overflow: hidden; object-fit: contain;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%,0);
+}
 
+</style>

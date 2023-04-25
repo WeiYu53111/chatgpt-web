@@ -1,10 +1,15 @@
 <template>
-	<NCard>
+	<NCard title="" class="shadow-md">
+		<div class="p-3 font-medium flex justify-between  items-center">
+			<span class="text-xl mr-auto" >注册</span>
+			<!--				<NButton class="ml-2 self-center">账号登录</NButton>-->
+			<NButton class="ml-2 self-center" @click="toLogin">登录</NButton>
+		</div>
 		<NForm ref="formRef" :model="registerInfo" :rules="rules">
-			<NFormItem path="email" label="邮箱"  class="w-80">
+			<NFormItem path="email" label="邮箱"  class="w-96">
 				<NInput v-model:value="registerInfo.email" @keydown.enter.prevent/>
 			</NFormItem>
-			<NFormItem path="password" label="密码"  class="w-80">
+			<NFormItem path="password" label="密码"  class="w-96">
 				<NInput
 					v-model:value="registerInfo.password"
 					type="password"
@@ -17,7 +22,7 @@
 				first
 				path="reenteredPassword"
 				label="重复密码"
-				class="w-80"
+				class="w-96"
 			>
 				<NInput
 					v-model:value="registerInfo.reenteredPassword"
@@ -26,15 +31,15 @@
 					@keydown.enter.prevent
 				/>
 			</NFormItem>
-			<NFormItem path="emailCode" label="验证码"  class="w-80">
-				<div class="flex  justify-start justify-between">
+			<NFormItem path="emailCode" label="验证码"  class="w-96">
+				<div class="flex justify-between">
 					<NInput
 						v-model:value="registerInfo.emailCode"
 						@keydown.enter.prevent
 						class="w-60"
 					/>
 					<NButton
-						@click="isValidEmail"
+						@click="sendEmailCode"
 						@keydown.enter.prevent
 					>发送验证码</NButton>
 				</div>
@@ -59,8 +64,8 @@
 
 
 import {defineComponent, ref} from 'vue'
-import {post} from "@/utils/request";
-import {login, register, UserInfo} from '@/api/user'
+import {isValidEmail} from '@/utils/functions'
+import {login, register, sendEmailCode,UserInfo} from '@/api/user'
 import {
 	FormInst,
 	FormItemInst,
@@ -90,7 +95,7 @@ export default defineComponent({
 		const rPasswordFormItemRef = ref<FormItemInst | null>(null)
 		const message = useMessage()
 		const modelRef = ref<UserInfo>({
-			email: null,
+			email: "531115357@qq.com",
 			password: null,
 			reenteredPassword: null,
 			emailCode: null
@@ -107,12 +112,25 @@ export default defineComponent({
 			)
 		}
 
-		function isValidEmail(email: string): boolean {
+		function toLogin(){
+			router.push("/login")
+		}
+
+		function sendEmailCode(email: string):void {
 			// 定义邮箱格式的正则表达式
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 			// 使用正则表达式测试邮箱地址，并返回结果
-			return emailRegex.test(email);
+			if(emailRegex.test(email)){
+				console.log(2222222222222222222222222222)
+				try {
+					mes = sendEmailCode(modelRef.value.email)
+					message.success(mes)
+				} catch (error: any) {
+					message.error(error.message ?? 'error')
+				}
+			}
+
 		}
 
 
@@ -131,12 +149,6 @@ export default defineComponent({
 				{
 					required: true,
 					message: '请输入密码'
-				}
-			],
-			emailCode: [
-				{
-					required: true,
-					trigger: ['input', 'blur']
 				}
 			],
 			reenteredPassword: [
@@ -162,7 +174,8 @@ export default defineComponent({
 			rPasswordFormItemRef,
 			registerInfo: modelRef,
 			rules,
-			isValidEmail,
+			toLogin,
+			sendEmailCode,
 			handlePasswordInput() {
 				if (modelRef.value.reenteredPassword) {
 					rPasswordFormItemRef.value?.validate({trigger: 'password-input'})
@@ -171,6 +184,8 @@ export default defineComponent({
 			handleValidateButtonClick(e: MouseEvent) {
 				e.preventDefault()
 				formRef.value?.validate((errors) => {
+					console.log(11111111111111111111111111111111111111111111)
+					if (errors) return;
 					try {
 						register(modelRef.value)
 						message.success("注册成功,正在前往登录")
