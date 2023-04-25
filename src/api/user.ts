@@ -2,8 +2,10 @@ import {post} from "@/utils/request";
 
 
 export interface UserInfo {
-	username: string | null
+	email: string | null
 	password: string | null
+	reenteredPassword: string | null
+	emailCode: string | null
 }
 
 /**
@@ -13,6 +15,15 @@ export interface UserInfo {
 export function login<T>(data:UserInfo){
 	return post<T>({
 		url: '/user/login',
+		data: data,
+	})
+}
+
+
+export function register<T>(data:UserInfo){
+	//发起请求
+	post<T>({
+		url: '/user/new',
 		data: data,
 	})
 }
