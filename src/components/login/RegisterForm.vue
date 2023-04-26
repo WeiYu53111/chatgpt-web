@@ -15,6 +15,7 @@
 					type="password"
 					@input="handlePasswordInput"
 					@keydown.enter.prevent
+					:input-props="{ autocomplete: 'on' }"
 				/>
 			</NFormItem>
 			<NFormItem
@@ -29,6 +30,7 @@
 					:disabled="!registerInfo.password"
 					type="password"
 					@keydown.enter.prevent
+					:input-props="{ autocomplete: 'on' }"
 				/>
 			</NFormItem>
 			<NFormItem path="emailCode" label="验证码"  class="w-96">
@@ -37,11 +39,13 @@
 						v-model:value="registerInfo.emailCode"
 						@keydown.enter.prevent
 						class="w-60"
+						:input-props="{ autocomplete: 'on' }"
 					/>
 					<NButton
-						@click="sendEmailCode"
+						@click="sendCode"
 						@keydown.enter.prevent
-					>发送验证码</NButton>
+					>发送验证码
+					</NButton>
 				</div>
 			</NFormItem>
 			<NRow :gutter="[0, 24]">
@@ -64,8 +68,8 @@
 
 
 import {defineComponent, ref} from 'vue'
-import {isValidEmail} from '@/utils/functions'
-import {login, register, sendEmailCode,UserInfo} from '@/api/user'
+import {isValidEmail, isSuccess} from '@/utils/functions'
+import {login, register, Response, sendEmailCode, UserInfo} from '@/api/user'
 import {
 	FormInst,
 	FormItemInst,
@@ -96,9 +100,9 @@ export default defineComponent({
 		const message = useMessage()
 		const modelRef = ref<UserInfo>({
 			email: "531115357@qq.com",
-			password: null,
-			reenteredPassword: null,
-			emailCode: null
+			password: "",
+			reenteredPassword: "",
+			emailCode: ""
 		})
 
 		function validatePasswordStartWith(
@@ -112,23 +116,36 @@ export default defineComponent({
 			)
 		}
 
-		function toLogin(){
+		function toLogin() {
 			router.push("/login")
 		}
 
-		function sendEmailCode(email: string):void {
+		function sendCode(email: string): void {
 			// 定义邮箱格式的正则表达式
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 			// 使用正则表达式测试邮箱地址，并返回结果
-			if(emailRegex.test(email)){
-				console.log(2222222222222222222222222222)
-				try {
-					mes = sendEmailCode(modelRef.value.email)
-					message.success(mes)
-				} catch (error: any) {
+			if (emailRegex.test(modelRef.value.email)) {
+
+				sendEmailCode<Response>(modelRef.value.email).then(
+					(res) => {
+						if (isSuccess(res)) {
+							message.success(res.message ?? "发送验证码成功")
+						} else {
+							message.error(`发送验证码失败: ${res.message ?? 'error'}`)
+						}
+					}
+				).catch((error) => {
 					message.error(error.message ?? 'error')
+				});
+
+
+				try {
+
+				} catch (error: any) {
+
 				}
+			} else {
+				message.error("邮箱格式不正确!")
 			}
 
 		}
@@ -175,7 +192,7 @@ export default defineComponent({
 			registerInfo: modelRef,
 			rules,
 			toLogin,
-			sendEmailCode,
+			sendCode,
 			handlePasswordInput() {
 				if (modelRef.value.reenteredPassword) {
 					rPasswordFormItemRef.value?.validate({trigger: 'password-input'})
@@ -184,7 +201,6 @@ export default defineComponent({
 			handleValidateButtonClick(e: MouseEvent) {
 				e.preventDefault()
 				formRef.value?.validate((errors) => {
-					console.log(11111111111111111111111111111111111111111111)
 					if (errors) return;
 					try {
 						register(modelRef.value)

@@ -1,11 +1,18 @@
 import {post} from "@/utils/request";
 
 
+export interface Response {
+	status: string
+	data: any
+	message: string
+}
+
+
 export interface UserInfo {
-	email: string | null
-	password: string | null
-	reenteredPassword: string | null
-	emailCode: string | null
+	email: string
+	password: string
+	reenteredPassword: string
+	emailCode: string
 }
 
 /**
@@ -28,12 +35,12 @@ export function register<T>(data:UserInfo){
 	})
 }
 
-export function sendEmailCode<T>(email:string){
+export function sendEmailCode<T>(email: string) {
 	//发起请求
-	return post<string>({
+	return post<T>({
 		url: '/service/sendEmailCode',
 		data: {
-			email:email
+			email: email
 		},
 	})
 }

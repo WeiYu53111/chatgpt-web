@@ -7,13 +7,13 @@
 			</NLayoutHeader>
 			<NLayoutContent content-style="padding: 24px;">
 				<NSpace vertical>
-				<div>
+<!--				<div>
 					<NCard style="border: 0px;">
 						<template #cover>
 							<img src="/public/pwa-192x192.png" class="logo">
 						</template>
 					</NCard>
-				</div>
+				</div>-->
 
 				<LoginForm></LoginForm>
 				</NSpace>

@@ -34,9 +34,10 @@ export class CommonManager {
 
 			try {
 				await EmailService.sendVerificationCode(email, code);
-				verificationCodes.set(email, { code, expiresAt }); // 存储验证码和过期时间信息
+				verificationCodes.set(email, {code, expiresAt}); // 存储验证码和过期时间信息
+				console.log(verificationCodes)
 				res.json({
-					data:"",
+					data: "",
 					message: "验证码已发送",
 					status: "Success"
 				});

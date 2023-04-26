@@ -1,9 +1,12 @@
+import {Response} from "@/utils/request";
+
+
 export function getCurrentDate() {
-  const date = new Date()
-  const day = date.getDate()
-  const month = date.getMonth() + 1
-  const year = date.getFullYear()
-  return `${year}-${month}-${day}`
+	const date = new Date()
+	const day = date.getDate()
+	const month = date.getMonth() + 1
+	const year = date.getFullYear()
+	return `${year}-${month}-${day}`
 }
 
 export function isValidEmail(email: string): boolean {
@@ -12,4 +15,12 @@ export function isValidEmail(email: string): boolean {
 
 	// 使用正则表达式测试邮箱地址，并返回结果
 	return emailRegex.test(email);
+}
+
+
+export function isSuccess(res: Response): boolean {
+	if (res.status === "Fail") {
+		return false
+	}
+	return true
 }

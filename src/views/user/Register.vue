@@ -8,11 +8,11 @@
 				<NLayoutContent content-style="padding: 24px;">
 					<NSpace vertical>
 						<div>
-							<NCard style="border: 0px;">
+<!--							<NCard style="border: 0px;">
 								<template #cover>
 									<img src="/public/pwa-192x192.png" class="logo">
 								</template>
-							</NCard>
+							</NCard>-->
 						</div>
 						<RegisterForm></RegisterForm>
 					</NSpace>
