@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { Database,User } from '../db/db';
+import {getSysdate} from '../utils/common'
+import EmailService from "../utils/EmailService";
 
 export class UserManager {
 	private router: Router;
@@ -39,8 +41,8 @@ export class UserManager {
 
 	private async getUserByName(req: Request, res: Response): Promise<void> {
 		try {
-			const data = req.body;
-			const row: User = await this.db.getUserByName(data.username);
+			const data = req.body as User;
+			const row: User = await this.db.getUserByName(data.email);
 			if (row) {
 				res.json({
 					data:row,
@@ -48,7 +50,7 @@ export class UserManager {
 					status: "Success"
 				});
 			} else {
-				res.send({ status: 'Fail', message: "User not found", data: null })
+				res.send({ status: 'Fail', message: "用户不存在", data: null })
 			}
 		} catch (err) {
 			res.send({ status: 'Fail', message: err.message, data: null })
@@ -56,13 +58,32 @@ export class UserManager {
 	}
 
 	private async createUser(req: Request, res: Response): Promise<void> {
-		const { name, email, password } = req.body;
+		const { email, password,repw,emailCode } = req.body;
+		if(EmailService.checkEmailCode(email,emailCode)==false){
+			res.json({
+				data:"",
+				message: "验证码错误或超时",
+				status: "Fail"
+			});
+			return
+		}
+
 		try {
-			const result: any = await this.db.createUser(name, email, password);
-			res.json({ id: result.lastID });
+			const user = {
+				email:email,
+				password:password,
+				last_login_time : getSysdate(),
+				vaild: 'true'
+			}
+			const result: any = await this.db.createUser(user);
+			res.json({
+				data:"",
+				message: "注册成功",
+				status: "Success"
+			});
 		} catch (err) {
 			console.error(err);
-			res.status(500).send('Internal server error');
+			res.send({ status: 'Fail', message: err.message, data: null })
 		}
 	}
 

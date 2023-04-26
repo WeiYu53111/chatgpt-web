@@ -11,8 +11,16 @@ interface MailOptions {
 	html?: string;
 }
 
+interface VerificationCode {
+	code: string;
+	expiresAt: Date;
+}
+
+
+
 class EmailService {
 	private transporter: nodemailer.Transporter;
+	private status = new Map<string, VerificationCode>();
 
 	constructor() {
 		this.transporter = nodemailer.createTransport({
@@ -27,17 +35,36 @@ class EmailService {
 	}
 
 	async sendVerificationCode(to: string, code: string): Promise<void> {
-		await this.transporter.sendMail({
+		this.transporter.sendMail({
 			from: `<${process.env.EMAIL_USER}>`,
 			to: to,
 			subject: "机必替验证码",
 			text: `您的验证码为：${code}`,
+		}).then(
+			() =>{
+				const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 设置验证码过期时间为当前时间+10分钟
+				this.status.set(to, {code, expiresAt}); // 存储验证码和过期时间信息
+				console.log(this.status)
 		});
 	}
 
-
+	public checkEmailCode(to:string,code:string): boolean {
+		const codeInfo = this.status.get(to)
+		const nowDate = new Date(Date.now() + 10 * 60 * 1000);
+		if (nowDate <= codeInfo.expiresAt) {
+			return true
+		}
+		return false
+	}
 
 }
 
-export default new EmailService();
+
+
+
+// 创建单例实例
+const instance = new EmailService();
+
+// 导出单例实例
+export default instance;
 

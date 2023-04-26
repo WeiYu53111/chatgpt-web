@@ -10,12 +10,8 @@ function generateVerificationCode(): string {
 	return code;
 }
 
-interface VerificationCode {
-	code: string;
-	expiresAt: Date;
-}
 
-const verificationCodes = new Map<string, VerificationCode>();
+
 
 
 export class CommonManager {
@@ -30,12 +26,8 @@ export class CommonManager {
 		this.router.post("/sendEmailCode", async (req, res) => {
 			const { email } = req.body;
 			const code = generateVerificationCode();
-			const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 设置验证码过期时间为当前时间+10分钟
-
 			try {
 				await EmailService.sendVerificationCode(email, code);
-				verificationCodes.set(email, {code, expiresAt}); // 存储验证码和过期时间信息
-				console.log(verificationCodes)
 				res.json({
 					data: "",
 					message: "验证码已发送",

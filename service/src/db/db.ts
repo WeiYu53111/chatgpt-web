@@ -1,8 +1,10 @@
 import sqlite3 from 'sqlite3';
 
 export interface User {
-	name: string;
-	password: string;
+	email: string,
+	password: string,
+	last_login_time: string,
+	vaild	: string
 }
 
 type Callback<T> = (err: Error | null, result?: T) => void;
@@ -27,10 +29,10 @@ class Database {
 		});
 	}
 
-	public getUserByName(usename: string): Promise<User> {
-		const sql = 'SELECT * FROM users WHERE username = ?';
+	public getUserByName(email: string): Promise<User> {
+		const sql = 'SELECT * FROM users WHERE email = ?';
 		return new Promise((resolve, reject) => {
-			this.db.get(sql, [usename], (err: Error | null, row: User) => {
+			this.db.get(sql, [email], (err: Error | null, row: User) => {
 				if (err) {
 					reject(err);
 				} else {
@@ -40,10 +42,10 @@ class Database {
 		});
 	}
 
-	public createUser(name: string, email: string, password: string): Promise<number> {
-		const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+	public createUser(user:User): Promise<number> {
+		const sql = 'INSERT INTO users (email, password,last_login_time,vaild ) VALUES (?, ?, ?,?)';
 		return new Promise((resolve, reject) => {
-			this.db.run(sql, [name, email, password], function(this: any, err: Error | null) {
+			this.db.run(sql, [user.email,user.password,user.last_login_time,user.vaild], function(this: any, err: Error | null) {
 				if (err) {
 					reject(err);
 				} else {

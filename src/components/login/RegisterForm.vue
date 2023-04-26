@@ -1,15 +1,15 @@
 <template>
 	<NCard title="" class="shadow-md">
 		<div class="p-3 font-medium flex justify-between  items-center">
-			<span class="text-xl mr-auto" >注册</span>
+			<span class="text-xl mr-auto">注册</span>
 			<!--				<NButton class="ml-2 self-center">账号登录</NButton>-->
 			<NButton class="ml-2 self-center" @click="toLogin">登录</NButton>
 		</div>
 		<NForm ref="formRef" :model="registerInfo" :rules="rules">
-			<NFormItem path="email" label="邮箱"  class="w-96">
+			<NFormItem path="email" label="邮箱" class="w-96">
 				<NInput v-model:value="registerInfo.email" @keydown.enter.prevent/>
 			</NFormItem>
-			<NFormItem path="password" label="密码"  class="w-96">
+			<NFormItem path="password" label="密码" class="w-96">
 				<NInput
 					v-model:value="registerInfo.password"
 					type="password"
@@ -33,7 +33,7 @@
 					:input-props="{ autocomplete: 'on' }"
 				/>
 			</NFormItem>
-			<NFormItem path="emailCode" label="验证码"  class="w-96">
+			<NFormItem path="emailCode" label="验证码" class="w-96">
 				<div class="flex justify-between">
 					<NInput
 						v-model:value="registerInfo.emailCode"
@@ -44,6 +44,7 @@
 					<NButton
 						@click="sendCode"
 						@keydown.enter.prevent
+						:disabled="buttonDisabled"
 					>发送验证码
 					</NButton>
 				</div>
@@ -64,7 +65,7 @@
 	</NCard>
 </template>
 
-<script  lang="ts">
+<script lang="ts">
 
 
 import {defineComponent, ref} from 'vue'
@@ -87,21 +88,19 @@ import {
 import {router} from "@/router";
 
 
-
-
-
 export default defineComponent({
 	components: {
-		NForm, NRow, NCol, NButton, NFormItem, NInput,NCard
+		NForm, NRow, NCol, NButton, NFormItem, NInput, NCard
 	},
 	setup() {
 		const formRef = ref<FormInst | null>(null)
 		const rPasswordFormItemRef = ref<FormItemInst | null>(null)
 		const message = useMessage()
+	  let buttonDisabled = ref(false)
 		const modelRef = ref<UserInfo>({
 			email: "531115357@qq.com",
-			password: "",
-			reenteredPassword: "",
+			password: "123456",
+			reenteredPassword: "123456",
 			emailCode: ""
 		})
 
@@ -130,6 +129,10 @@ export default defineComponent({
 					(res) => {
 						if (isSuccess(res)) {
 							message.success(res.message ?? "发送验证码成功")
+							buttonDisabled.value = true; // 禁用按钮
+							setTimeout(function() {
+								buttonDisabled.value = false; // 30秒后解除禁用
+							}, 30000);
 						} else {
 							message.error(`发送验证码失败: ${res.message ?? 'error'}`)
 						}
@@ -190,6 +193,7 @@ export default defineComponent({
 			formRef,
 			rPasswordFormItemRef,
 			registerInfo: modelRef,
+			buttonDisabled,
 			rules,
 			toLogin,
 			sendCode,
@@ -204,10 +208,20 @@ export default defineComponent({
 					if (errors) return;
 					try {
 						register(modelRef.value)
-						message.success("注册成功,正在前往登录")
-						router.push("/login")
+							.then(
+								(res) => {
+									if (isSuccess(res)) {
+										message.success("注册成功,正在前往登录")
+										router.push("/login")
+									} else {
+										message.error(`注册失败: ${res.message ?? 'error'}`)
+									}
+								}
+							).catch((error) => {
+							message.error(error.message ?? 'error')
+						})
 					} catch (error: any) {
-						message.error(error.message ?? 'error')
+						console.log(error)
 					}
 				})
 			}
