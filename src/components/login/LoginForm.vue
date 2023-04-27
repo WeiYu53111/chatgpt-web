@@ -83,6 +83,8 @@ export default defineComponent({
 					login<Response>(modelRef.value).then(
 						(res) => {
 							if (isSuccess(res)) {
+								const token = res.data.data
+								localStorage.setItem("token", token); // 将 token 存储在本地存储中
 								message.success("登录成功,正在前往聊天室.")
 								router.push("/chat")
 							} else {

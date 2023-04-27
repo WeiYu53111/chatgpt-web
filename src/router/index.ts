@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { setupPageGuard } from './permission'
+//import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 
 const routes: RouteRecordRaw[] = [
@@ -31,6 +31,7 @@ const routes: RouteRecordRaw[] = [
     path: '/chatroom',
     name: 'chatroom',
     component: ChatLayout,
+		meta: { requiresAuth: true }, // 添加元信息，表示该页面需要认证
     redirect: '/chat',
     children: [
       {
@@ -65,7 +66,22 @@ export const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
 })
 
-setupPageGuard(router)
+//setupPageGuard(router)
+
+router.beforeEach((to, from, next) => {
+	const token = localStorage.getItem("token");
+
+	if (to.matched.some((record) => record.meta.requiresAuth)) { // 判断是否需要认证
+		if (token) { // token 存在，放行
+			next();
+		} else { // token 不存在，跳转到登录页
+			next({ name: "login" });
+		}
+	} else { // 不需要认证，放行
+		next();
+	}
+});
+
 
 export async function setupRouter(app: App) {
   app.use(router)

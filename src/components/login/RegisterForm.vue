@@ -207,8 +207,7 @@ export default defineComponent({
 				formRef.value?.validate((errors) => {
 					if (errors) return;
 					try {
-						register(modelRef.value)
-							.then(
+						register<Response>(modelRef.value).then(
 								(res) => {
 									if (isSuccess(res)) {
 										message.success("注册成功,正在前往登录")

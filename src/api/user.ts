@@ -29,7 +29,7 @@ export function login<T>(data:UserInfo){
 
 export function register<T>(data:UserInfo){
 	//发起请求
-	post<T>({
+	return post<T>({
 		url: '/user/new',
 		data: data,
 	})

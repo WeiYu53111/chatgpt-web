@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import EmailService from "../utils/EmailService";
+import EmailService from "../services/EmailService";
 
 function generateVerificationCode(): string {
 	const digits = "0123456789";
@@ -10,11 +10,7 @@ function generateVerificationCode(): string {
 	return code;
 }
 
-
-
-
-
-export class CommonManager {
+export class PubRoute {
 	private router: Router;
 
 	constructor() {
