@@ -15,6 +15,10 @@ export interface UserInfo {
 	emailCode: string
 }
 
+export interface Token {
+	token:string
+}
+
 /**
  * 登录
  * @param data

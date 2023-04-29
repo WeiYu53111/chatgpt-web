@@ -51,9 +51,10 @@ import {
 	NCard,
 	NSpace
 } from 'naive-ui'
-import {login, UserInfo,Response} from '@/api/user'
+import {login, UserInfo,Response,Token} from '@/api/user'
 import {router} from "@/router";
 import {isSuccess} from "@/utils/functions";
+import {useTokenStore} from '@/store'
 
 
 export default defineComponent({
@@ -61,6 +62,9 @@ export default defineComponent({
 		NForm, NRow, NCol, NButton, NFormItem, NInput, NCard, NSpace
 	},
 	setup() {
+
+
+
 		const formRef = ref<FormInst | null>(null)
 		const message = useMessage()
 		const modelRef = ref<UserInfo>({
@@ -83,10 +87,11 @@ export default defineComponent({
 					login<Response>(modelRef.value).then(
 						(res) => {
 							if (isSuccess(res)) {
-								const token = res.data.data
-								localStorage.setItem("token", token); // 将 token 存储在本地存储中
+								const data = res.data as unknown as Token
+								const store = useTokenStore()
+								store.setToken(data.token)
 								message.success("登录成功,正在前往聊天室.")
-								router.push("/chat")
+								router.push("/room")
 							} else {
 								message.error(`登录失败: ${res.message ?? 'error'}`)
 							}

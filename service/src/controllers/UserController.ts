@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Database, User } from '../db/db';
 import { getSysdate } from '../utils/common';
 import EmailService from "../utils/EmailService";
+import {AuthService} from "../services/AuthService"
 
 export class UserController {
 	private db: Database;
@@ -23,14 +24,18 @@ export class UserController {
 	public async getUserByName(req: Request, res: Response): Promise<void> {
 		try {
 			const data = req.body as User;
-			const row: User = await this.db.getUserByName(data.email);
+			const row: User = await this.db.getUserByName(data.email,data.password);
+
+			let toekn = await AuthService.generateToken({
+				email: data.email
+			})
 			const resData = {
-				data: row,
+				data: { token : toekn},
 				message: "登录成功",
 				status: "Success"
 			}
 
-			if (row) {
+			if (toekn) {
 				res.json(resData);
 			} else {
 				res.send({ status: 'Fail', message: "用户不存在", data: null })

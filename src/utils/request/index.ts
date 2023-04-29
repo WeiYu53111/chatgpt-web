@@ -1,6 +1,6 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
 import request from './axios'
-import { useAuthStore } from '@/store'
+import { useAuthStore,useTokenStore } from '@/store'
 
 export interface HttpOption {
   url: string
@@ -24,12 +24,15 @@ function http<T = any>(
 ) {
   const successHandler = (res: AxiosResponse<Response<T>>) => {
     const authStore = useAuthStore()
+		const tokenStore = useTokenStore()
 
     if (res.data.status === 'Success' || typeof res.data === 'string')
       return res.data
 
     if (res.data.status === 'Unauthorized') {
       authStore.removeToken()
+			tokenStore.clearToken()
+			//TODO 此处发现没授权直接跳转到登录页有点突兀待优化
       window.location.reload()
     }
 

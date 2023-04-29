@@ -1,12 +1,17 @@
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
-const secret = 'mysecretkey';
+const secret = 'Qwe123!@#';
+
+interface Payload {
+	email: string;
+}
+
 
 export class AuthService {
-	public static generateToken(payload: any): Promise<string> {
+	public static generateToken(payload: Payload): Promise<string> {
 		return new Promise((resolve, reject) => {
-			jwt.sign(payload, secret, { expiresIn: '1h' }, (error, token) => {
+			jwt.sign(payload, secret, { expiresIn: '12h' }, (error, token) => {
 				if (error) {
 					reject(error);
 				} else {
@@ -16,7 +21,7 @@ export class AuthService {
 		});
 	}
 
-	public static verifyToken(token: string): Promise<any> {
+	public static verifyToken(token: string): Promise<Payload> {
 		return new Promise((resolve, reject) => {
 			jwt.verify(token, secret, (error, decoded) => {
 				if (error) {
@@ -38,3 +43,4 @@ export class AuthService {
 		return await bcrypt.compare(password, hashedPassword);
 	}
 }
+

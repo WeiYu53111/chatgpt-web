@@ -29,10 +29,10 @@ class Database {
 		});
 	}
 
-	public getUserByName(email: string): Promise<User> {
-		const sql = 'SELECT * FROM users WHERE email = ?';
+	public getUserByName(email: string,passwd: string): Promise<User> {
+		const sql = 'SELECT * FROM users WHERE email = ? and password = ?';
 		return new Promise((resolve, reject) => {
-			this.db.get(sql, [email], (err: Error | null, row: User) => {
+			this.db.get(sql, [email,passwd], (err: Error | null, row: User) => {
 				if (err) {
 					reject(err);
 				} else {
