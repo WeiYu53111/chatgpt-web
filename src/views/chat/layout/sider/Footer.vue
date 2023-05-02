@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 //import { defineAsyncComponent, ref } from 'vue'
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import { HoverButton, SvgIcon, UserAvatar } from '@/components/common'
 import LogOutButton from "@/views/chat/layout/sider/LogOutButton.vue";
 import {Theme} from "@/store/modules/app/helper";
@@ -11,6 +11,7 @@ import { NButton } from "naive-ui";
 
 const show = ref(false)
 const appStore = useAppStore()
+const theme = computed(() => appStore.theme)
 
 const themeOptions: { label: string; key: Theme; icon: string }[] = [
 	{
