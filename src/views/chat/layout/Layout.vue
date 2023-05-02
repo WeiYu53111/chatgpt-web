@@ -4,6 +4,7 @@ import { NLayout, NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 //import Permission from './Permission.vue'
+import PageHeader from "@/views/chat/layout/header/PageHeader.vue";
 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStore, useChatStore } from '@/store'
@@ -36,17 +37,20 @@ const getContainerClass = computed(() => {
 </script>
 
 <template>
-  <div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
-    <div class="h-full overflow-hidden" :class="getMobileClass">
-      <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
-        <Sider />
-        <NLayoutContent class="h-full">
-          <RouterView v-slot="{ Component, route }">
-            <component :is="Component" :key="route.fullPath" />
-          </RouterView>
-        </NLayoutContent>
-      </NLayout>
-    </div>
-<!--    <Permission :visible="needPermission" />-->
-  </div>
+	<div class="h-screen flex flex-col">
+<!--		<div :class="[isMobile ? 'px-0' : 'px-4']"><PageHeader></PageHeader></div>-->
+		<div :class="[isMobile ? 'px-0' : 'px-4']" class="h-full dark:bg-[#24272e] transition-all">
+			<div :class="getMobileClass" class="h-full overflow-hidden">
+				<NLayout :class="getContainerClass" class="z-40 transition" has-sider>
+					<Sider />
+					<NLayoutContent class="h-full">
+						<RouterView v-slot="{ Component, route }">
+							<component :is="Component" :key="route.fullPath" />
+						</RouterView>
+					</NLayoutContent>
+				</NLayout>
+			</div>
+			<!--    <Permission :visible="needPermission" />-->
+		</div>
+	</div>
 </template>

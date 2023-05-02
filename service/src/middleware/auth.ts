@@ -19,7 +19,8 @@ const auth = async (req, res, next) => {
   }*/
 	//修改逻辑为 ,检查token的合法性
 
-	try {
+	//todo 后续添加普通用户限制逻辑
+	/*try {
 		const loginToken = req.header('LoginToken')
 		if (!loginToken)
 			throw new Error('Error: 无访问权限 | No access rights')
@@ -30,8 +31,8 @@ const auth = async (req, res, next) => {
 	catch (error) {
 		console.log("有用户token验证失败")
 		res.send({ status: 'Unauthorized', message: error.message ?? 'Please authenticate.', data: null })
-	}
-
+	}*/
+	next()
 
 }
 

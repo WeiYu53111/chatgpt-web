@@ -48,3 +48,18 @@ export function sendEmailCode<T>(email: string) {
 		},
 	})
 }
+
+export async function verifyToken(token:string|null): Promise<boolean>{
+
+	if(token === null){
+		return false
+	}
+	const res = await post<Response>({
+		url: '/service/verifyToken',
+		data: {
+			token: token
+		}
+	})
+	return res.status === 'Success'
+
+}

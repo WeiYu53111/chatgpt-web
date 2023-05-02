@@ -66,6 +66,9 @@ devDependencies:
   '@types/node':
     specifier: ^18.14.6
     version: 18.14.6
+  '@vicons/ionicons5':
+    specifier: ^0.12.0
+    version: 0.12.0
   '@vitejs/plugin-vue':
     specifier: ^4.0.0
     version: 4.0.0(vite@4.2.0)(vue@3.2.47)
@@ -2256,6 +2259,10 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.54.0
       eslint-visitor-keys: 3.3.0
+    dev: true
+
+  /@vicons/ionicons5@0.12.0:
+    resolution: {integrity: sha512-Iy1EUVRpX0WWxeu1VIReR1zsZLMc4fqpt223czR+Rpnrwu7pt46nbnC2ycO7ItI/uqDLJxnbcMC7FujKs9IfFA==}
     dev: true
 
   /@vitejs/plugin-vue@4.0.0(vite@4.2.0)(vue@3.2.47):

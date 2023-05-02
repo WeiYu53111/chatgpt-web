@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import EmailService from "../services/EmailService";
+import {AuthService} from "../services/AuthService";
 
 function generateVerificationCode(): string {
 	const digits = "0123456789";
@@ -30,6 +31,27 @@ export class PubRoute {
 					status: "Success"
 				});
 			} catch (error) {
+				res.send({ status: 'Fail', message: error.message, data: null })
+			}
+		})
+
+
+
+		this.router.post("/verifyToken", async (req, res) => {
+			const data = req.body;
+			const loginToken = data.token
+			if (!loginToken)
+				throw new Error('Invalid Token')
+
+			try{
+				const obj =  await AuthService.verifyToken(loginToken)
+				console.log("user:"+obj.email +" 通过token验证")
+				res.json({
+					data: "",
+					message: "",
+					status: "Success"
+				});
+			}catch (error){
 				res.send({ status: 'Fail', message: error.message, data: null })
 			}
 		});

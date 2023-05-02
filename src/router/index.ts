@@ -4,7 +4,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 //import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 
-import {useTokenStore } from '@/store'
+import { useTokenStore } from '@/store'
 
 const routes: RouteRecordRaw[] = [
 
@@ -47,18 +47,21 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/404',
     name: '404',
+		meta: { skipCheck: true },
     component: () => import('@/views/exception/404/index.vue'),
   },
 
   {
     path: '/500',
     name: '500',
+		meta: { skipCheck: true },
     component: () => import('@/views/exception/500/index.vue'),
   },
 
   {
     path: '/:pathMatch(.*)*',
     name: 'notFound',
+		meta: { skipCheck: true },
     redirect: '/404',
   },
 ]
@@ -70,34 +73,40 @@ export const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
 })
 
-//setupPageGuard(router)
+//setupMyPageGuard(router)
 
-router.beforeEach((to, from, next) => {
-
-	const store = useTokenStore()
-	const token = store.token
-	if (to.path === "/" || to.path==="/login"){
-		if (token) { // token 存在，跳转到room
-			next({name:"room"})
-		} else { // token 不存在
-			next();
+router.beforeEach(async(to, from, next) => {
+	if(to.meta.skipCheck === true){
+		next()
+	}else{
+		try {
+			const store = useTokenStore()
+			if(store.isLogin()){
+				const originPath =to.path
+				if(originPath === "/login" || originPath === "/register"){
+					next({name:"room"})
+				}else{
+					next()
+				}
+			}else{
+				const originPath = to.path
+				if(originPath === "/login" || originPath === "/register"){
+					next()
+				}else{
+					next({name:"login"})
+				}
+			}
+		}catch (error) {
+			console.error(error);
+			next({ name: '500' });
 		}
-
-	} else if(to.matched.some((record) => record.meta.requiresAuth)) { // 判断是否需要认证
-
-		if (token) { // token 存在，放行
-			next();
-		} else { // token 不存在，跳转到登录页
-			next({ name: "login" });
-		}
-	} else { // 不需要认证，放行
-
-		next();
 	}
-});
+})
 
 
 export async function setupRouter(app: App) {
   app.use(router)
   await router.isReady()
+
+
 }

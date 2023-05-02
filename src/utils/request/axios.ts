@@ -1,4 +1,5 @@
-import axios, { type AxiosResponse } from 'axios'
+import axios from 'axios'
+import type{ AxiosResponse }  from 'axios'
 import {useAuthStore, useTokenStore} from '@/store'
 
 const service = axios.create({
@@ -14,7 +15,7 @@ service.interceptors.request.use(
 		//添加登录token
 		const loginToken = useTokenStore().token
 		if(loginToken){
-			config.headers.LoginToken = loginToken+"234"
+			config.headers.LoginToken = loginToken
 		}
     return config
   },

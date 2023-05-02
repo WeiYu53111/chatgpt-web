@@ -17,7 +17,7 @@ const userInfo = computed(() => userStore.userInfo)
         <NAvatar
           size="large"
           round
-          src="../assets/ikun.png"
+          src="../../assets/ikun.png"
           :fallback-src="defaultAvatar"
         />
       </template>
