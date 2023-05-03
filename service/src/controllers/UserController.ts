@@ -1,19 +1,21 @@
 import { Request, Response } from 'express';
-import { Database, User } from '../db/db';
+import Database from '../db/db';
 import { getSysdate } from '../utils/common';
 import EmailService from "../utils/EmailService";
 import {AuthService} from "../services/AuthService"
+import userSevice from "../services/UserService"
+import {User} from "../domain/User";
 
 export class UserController {
-	private db: Database;
 
-	constructor(db: Database) {
-		this.db = db;
+
+	constructor() {
+
 	}
 
 	public async getAllUsers(req: Request, res: Response): Promise<void> {
 		try {
-			const rows: any[] = await this.db.getAllUsers();
+			const rows: any[] = await Database.getAllUsers();
 			res.json(rows);
 		} catch (err) {
 			console.error(err);
@@ -24,8 +26,7 @@ export class UserController {
 	public async getUserByName(req: Request, res: Response): Promise<void> {
 		try {
 			const data = req.body as User;
-			const row: User = await this.db.getUserByName(data.email,data.password);
-
+			const row: User =  await userSevice.getUserByEmailAndPassword(data.email,data.password);
 			let toekn = await AuthService.generateToken({
 				email: data.email
 			})
@@ -34,7 +35,6 @@ export class UserController {
 				message: "登录成功",
 				status: "Success"
 			}
-
 			if (toekn) {
 				res.json(resData);
 			} else {
@@ -63,7 +63,7 @@ export class UserController {
 				last_login_time: getSysdate(),
 				vaild: 'true'
 			}
-			const result: any = await this.db.createUser(user);
+			const result: any = await Database.createUser(user);
 			res.json({
 				data: "",
 				message: "注册成功",
@@ -78,7 +78,7 @@ export class UserController {
 	public async updateUser(req: Request, res: Response): Promise<void> {
 		const { name, email, password } = req.body;
 		try {
-			await this.db.updateUser(req.params.id, name, email, password);
+			await Database.updateUser(req.params.id, name, email, password);
 			res.sendStatus(204);
 		} catch (err) {
 			console.error(err);

@@ -1,7 +1,14 @@
 import { isNotEmptyString } from '../utils/is'
 import { AuthService } from "../services/AuthService";
+import {Request} from "express";
 
-const auth = async (req, res, next) => {
+export interface CustomRequest extends Request {
+	userInfo: {
+		email: string
+	}
+}
+
+const auth = async (req: CustomRequest, res, next) => {
   /*const AUTH_SECRET_KEY = process.env.AUTH_SECRET_KEY
   if (isNotEmptyString(AUTH_SECRET_KEY)) {
     try {
@@ -21,19 +28,14 @@ const auth = async (req, res, next) => {
 
 	//todo 后续添加普通用户限制逻辑
 	/*try {
-		const loginToken = req.header('LoginToken')
-		if (!loginToken)
-			throw new Error('Error: 无访问权限 | No access rights')
-		const obj =  await AuthService.verifyToken(loginToken)
-		console.log("user:"+obj.email +" 通过token验证")
+		const email = req.userInfo.email
+
 		next()
 	}
 	catch (error) {
-		console.log("有用户token验证失败")
 		res.send({ status: 'Unauthorized', message: error.message ?? 'Please authenticate.', data: null })
 	}*/
 	next()
-
 }
 
 export { auth }

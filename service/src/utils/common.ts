@@ -15,3 +15,11 @@ export function getSysdate() {
 	//console.log(formattedDate); // 输出类似于"2022-04-01 09:00:00"的字符串
 	return formattedDate
 }
+
+
+export function formatDate(date: Date): string {
+	const year = date.getFullYear();
+	const month = ("0" + (date.getMonth() + 1)).slice(-2);
+	const day = ("0" + date.getDate()).slice(-2);
+	return `${year}${month}${day}`;
+}

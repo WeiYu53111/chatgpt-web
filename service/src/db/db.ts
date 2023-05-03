@@ -42,6 +42,20 @@ class Database {
 		});
 	}
 
+	public queryUserByName(email: string,passwd: string): Promise<User> {
+		const sql = 'SELECT * FROM users WHERE email = ?';
+		return new Promise((resolve, reject) => {
+			this.db.get(sql, [email,passwd], (err: Error | null, row: User) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(row);
+				}
+			});
+		});
+	}
+
+
 	public createUser(user:User): Promise<number> {
 		const sql = 'INSERT INTO users (email, password,last_login_time,vaild ) VALUES (?, ?, ?,?)';
 		return new Promise((resolve, reject) => {
@@ -94,4 +108,9 @@ class Database {
 	}
 }
 
-export { Database };
+// 创建单例实例
+const instance = new Database('user.db');
+
+// 导出单例实例
+export default instance;
+

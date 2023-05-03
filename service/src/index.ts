@@ -5,6 +5,7 @@ import {ChatRoute} from "./routes/ChatRoute";
 
 import {Request, Response, NextFunction} from 'express';
 import {AuthService} from "./services/AuthService";
+import {CustomRequest} from "./middleware/auth";
 
 //const cors = require('cors')
 const app = express()
@@ -45,7 +46,9 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 	next();
 }
 
-const tokenInterceptor= (req: Request, res: Response, next: NextFunction) => {
+
+
+const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) => {
 
 	if(!req.path.startsWith("/user/login") && !req.path.startsWith("/user/register") && !req.path.startsWith("/service/verifyToken")){
 		const loginToken = req.header('LoginToken')
@@ -53,6 +56,7 @@ const tokenInterceptor= (req: Request, res: Response, next: NextFunction) => {
 			throw new Error('Error: 无访问权限 | No access rights')
 		AuthService.verifyToken(loginToken).then(
 			res => {
+				req.userInfo = {email : res.email}
 				//console.log("user:" + res.email + " 通过token验证")
 				next()
 			}
@@ -68,7 +72,7 @@ const tokenInterceptor= (req: Request, res: Response, next: NextFunction) => {
 }
 
 //測試用
-app.use(interceptor)
+//app.use(interceptor)
 // 注册所有需要验证令牌的路由
 app.use(tokenInterceptor);
 

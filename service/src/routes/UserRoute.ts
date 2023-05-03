@@ -1,16 +1,15 @@
 import { Router } from 'express';
-import { Database } from '../db/db';
 import { UserController } from '../controllers/UserController';
 
+
+//TODO 待替换掉这个类,应该直接
 export class UserRoute {
 	private router: Router;
-	private db: Database;
 	private userController: UserController;
 
 	constructor() {
 		this.router = Router();
-		this.db = new Database('user.db');
-		this.userController = new UserController(this.db);
+		this.userController = new UserController();
 		this.initRoutes();
 	}
 
