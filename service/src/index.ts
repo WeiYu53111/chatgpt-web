@@ -50,7 +50,8 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 
 const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) => {
 
-	if(!req.path.startsWith("/user/login") && !req.path.startsWith("/user/register") && !req.path.startsWith("/service/verifyToken")){
+	const publicPaths = ["/user/login", "/user/register", "/service/verifyToken","/service/sendEmailCode"];
+	if (!publicPaths.some((path) => req.path.startsWith(path))) {
 		const loginToken = req.header('LoginToken')
 		if (!loginToken)
 			throw new Error('Error: 无访问权限 | No access rights')
