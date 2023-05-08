@@ -58,6 +58,8 @@ class SqliteUserRepository implements UserRepository {
 		const sql = 'SELECT query_count FROM users_stat WHERE email = ? and squad_date = ?';
 		return this.querySingle<any>(sql, [email,day]).then((count) =>{
 			return count.query_count
+		}).catch( err =>{
+			return 0
 		});
 	}
 

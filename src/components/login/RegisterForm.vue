@@ -98,9 +98,9 @@ export default defineComponent({
 		const message = useMessage()
 	  let buttonDisabled = ref(false)
 		const modelRef = ref<UserInfo>({
-			email: "531115357@qq.com",
-			password: "123456",
-			reenteredPassword: "123456",
+			email: "",
+			password: "",
+			reenteredPassword: "",
 			emailCode: ""
 		})
 
