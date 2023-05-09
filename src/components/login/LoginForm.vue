@@ -22,7 +22,7 @@
 						<div style="display: flex; justify-content: flex-end">
 							<NButton
 								class="shadow-md hover:shadow-lg"
-								:disabled="userInfo.username === null"
+								:disabled="userInfo.email === null"
 								@click="handleValidateButtonClick"
 							>登录
 							</NButton>

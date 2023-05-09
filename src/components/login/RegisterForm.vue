@@ -69,8 +69,8 @@
 
 
 import {defineComponent, ref} from 'vue'
-import {isValidEmail, isSuccess} from '@/utils/functions'
-import {login, register, Response, sendEmailCode, UserInfo} from '@/api/user'
+import { isSuccess} from '@/utils/functions'
+import { register, Response, sendEmailCode, UserInfo} from '@/api/user'
 import {
 	FormInst,
 	FormItemInst,
@@ -119,7 +119,7 @@ export default defineComponent({
 			router.push("/login")
 		}
 
-		function sendCode(email: string): void {
+		function sendCode(): void {
 			// 定义邮箱格式的正则表达式
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			// 使用正则表达式测试邮箱地址，并返回结果

@@ -50,7 +50,7 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 
 const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) => {
 
-	const publicPaths = ["/user/login", "/user/register", "/service/verifyToken","/service/sendEmailCode"];
+	const publicPaths = ["/user/login", "/user/new", "/service/verifyToken","/service/sendEmailCode"];
 	if (!publicPaths.some((path) => req.path.startsWith(path))) {
 		const loginToken = req.header('LoginToken')
 		if (!loginToken)

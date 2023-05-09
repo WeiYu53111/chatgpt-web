@@ -27,7 +27,7 @@
 <script setup lang="ts">
 //import Header from '@/components/login/Header.vue'
 import LoginForm from "@/components/login/LoginForm.vue"
-import {NCard,NSpace,NLayout,NLayoutFooter,NLayoutContent,NLayoutHeader} from 'naive-ui'
+import {NSpace,NLayout,NLayoutFooter,NLayoutContent,NLayoutHeader} from 'naive-ui'
 
 </script>
 

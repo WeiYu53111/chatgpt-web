@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import RegisterForm from "@/components/login/RegisterForm.vue";
-import {NCard,NSpace,NLayout,NLayoutFooter,NLayoutContent,NLayoutHeader} from 'naive-ui'
+import {NSpace,NLayout,NLayoutFooter,NLayoutContent,NLayoutHeader} from 'naive-ui'
 
 </script>
 <style>

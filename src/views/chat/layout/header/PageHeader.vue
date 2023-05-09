@@ -26,9 +26,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useMessage,NAvatar,NPageHeader,NIcon,NButton  } from 'naive-ui'
-import {useBasicLayout} from "@/hooks/useBasicLayout";
-const { isMobile } = useBasicLayout()
+import { NAvatar,NPageHeader,NIcon,NButton  } from 'naive-ui'
+//import {useBasicLayout} from "@/hooks/useBasicLayout";
+//const { isMobile } = useBasicLayout()
 import { LogOut } from '@vicons/ionicons5'
 import { useTokenStore } from '@/store'
 import {router} from "@/router";
