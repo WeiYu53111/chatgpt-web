@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Database from '../db/db';
-import { getSysdate } from '../utils/common';
-import EmailService from "../utils/EmailService";
+import {getSysdate} from '../utils/common';
+import EmailService from "../services/EmailService";
 import {AuthService} from "../services/AuthService"
 import userSevice from "../services/UserService"
 import {User} from "../domain/User";
