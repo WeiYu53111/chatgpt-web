@@ -37,7 +37,7 @@ const getContainerClass = computed(() => {
 </script>
 
 <template>
-	<div class="h-screen flex flex-col">
+	<div class="h-full flex flex-col">
 <!--		<div :class="[isMobile ? 'px-0' : 'px-4']"><PageHeader></PageHeader></div>-->
 		<div :class="[isMobile ? 'px-0' : 'px-4']" class="h-full dark:bg-[#24272e] transition-all">
 			<div :class="getMobileClass" class="h-full overflow-hidden">
