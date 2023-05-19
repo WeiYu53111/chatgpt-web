@@ -7,6 +7,8 @@ import {Request, Response, NextFunction} from 'express';
 import {AuthService} from "./services/AuthService";
 import {CustomRequest} from "./middleware/auth";
 
+import userSevice from "./services/UserService"
+
 //const cors = require('cors')
 const app = express()
 const user = new UserRoute();
