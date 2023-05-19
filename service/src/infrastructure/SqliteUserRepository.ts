@@ -1,14 +1,34 @@
 import sqlite3 from 'sqlite3';
-import { UserRepository } from '../repository/UserRepository';
-import { UserEntity, User } from '../domain/User';
+import {UserRepository} from '../repository/UserRepository';
+import {UserEntity, User} from '../domain/User';
+import {readFileSync} from "fs";
+import {resolve} from 'path';
+import {create_user_table} from "../db/create_db"
 
 type Callback<T> = (err: Error | null, result?: T) => void;
+
+const CREATE_TABLE_SQL_FILE = "create_tables.sql"
 
 class SqliteUserRepository implements UserRepository {
 	private db: sqlite3.Database;
 
 	constructor(filename: string) {
 		this.db = new sqlite3.Database(filename);
+		this.initDb()
+	}
+
+	public initDb() {
+		const db = this.db
+		this.db.serialize(() => {
+			db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
+				if (!row) {
+					db.exec(create_user_table, (err) => {
+						if (err) console.log('Error creating table:', err);
+						process.exit(1)
+					});
+				}
+			});
+		});
 	}
 
 	public async getAllUsers(): Promise<User[]> {
@@ -19,7 +39,7 @@ class SqliteUserRepository implements UserRepository {
 
 	public getUserByEmailAndPassword(email: string, password: string): Promise<User | undefined> {
 		const sql = 'SELECT * FROM users WHERE email = ? and password = ?';
-		return this.querySingle<User>(sql, [email,password]).then((row) => row && this.mapToUser(row));
+		return this.querySingle<User>(sql, [email, password]).then((row) => row && this.mapToUser(row));
 	}
 
 	public getUserByEmail(email: string): Promise<User | undefined> {
@@ -107,9 +127,9 @@ class SqliteUserRepository implements UserRepository {
 			});
 		});
 	}
-
 }
 
 const instance = new SqliteUserRepository("user.db")
+
 
 export default instance
