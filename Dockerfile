@@ -22,13 +22,13 @@ RUN npm install pnpm -g
 
 WORKDIR /app
 
-COPY /service/package.json /app
+COPY ./service/package.json /app
 
-COPY /service/pnpm-lock.yaml /app
+COPY ./service/pnpm-lock.yaml /app
 
 RUN pnpm install
 
-COPY /service /app
+COPY ./service /app
 
 RUN pnpm build
 
@@ -36,24 +36,22 @@ RUN pnpm build
 FROM node:lts-alpine
 
 # 为了安装sqlite3需要安装一些编译工具
-RUN apk add --no-cache make gcc g++ python
 RUN npm install pnpm -g
 
 WORKDIR /app
 
-COPY /service/package.json /app
-
-COPY /service/pnpm-lock.yaml /app
+COPY ./service/package.json /app
+COPY ./service/pnpm-lock.yaml /app
 
 # 安装sqlite3
-RUN pnpm install sqlite3
+# RUN pnpm install sqlite3
 RUN pnpm install --production && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
-COPY /service /app
-
+COPY ./service /app
+ADD ./service/.env /app/build/.env
 COPY --from=frontend /app/dist /app/public
-
 COPY --from=backend /app/build /app/build
+#COPY --from=backend /app/.env /app/build
 
 EXPOSE 3002
 
