@@ -35,6 +35,8 @@
     "https-proxy-agent": "^5.0.1",
     "isomorphic-fetch": "^3.0.0",
     "jsonwebtoken": "^9.0.0",
+    "log4j": "^1.0.0",
+    "log4js": "^6.9.1",
     "node-fetch": "^3.3.1",
     "nodemailer": "^6.9.1",
     "socks-proxy-agent": "^7.0.0",
