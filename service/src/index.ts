@@ -50,6 +50,8 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 
 
 
+
+
 const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) => {
 
 	const publicPaths = ["/user/login", "/user/new", "/service/verifyToken","/service/sendEmailCode"];
@@ -76,6 +78,15 @@ const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) 
 
 //測試用
 //app.use(interceptor)
+
+// 开发模式的时候, vite会重写URL, 这里用不上
+// 部署在nginx的时候 nginx会重写URL, 这里用不上
+// 部署在docker的时候,就需要express重写URL
+app.use('/api/*', (req, res) => {
+	const newPath = req.originalUrl.replace(/^\/api\//, '/');
+	res.redirect(newPath);
+});
+
 // 注册所有需要验证令牌的路由
 app.use(tokenInterceptor);
 
