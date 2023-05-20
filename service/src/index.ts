@@ -19,25 +19,17 @@ const chatpgt = new ChatRoute()
 const logger = log4js.getLogger('app');
 log4js.configure({
 	appenders: {
-		file: { type: 'file', filename: 'logs/app.log' },
-		console: { type: 'console' }
+		file: {type: 'file', filename: 'logs/app.log'},
+		console: {type: 'console'}
 	},
-	categories: { default: { appenders: ['file', 'console'], level: 'info' } }
+	categories: {default: {appenders: ['file', 'console'], level: 'info'}}
 });
 
 // 将 logger 对象挂载到 app.locals 上
 app.locals.logger = logger;
 
-app.get('/api/logger/level/:level/:pwd', (req: Request, res: Response) => {
-	const { level,pwd } = req.params;
 
-	if(pwd == "Qwe123"){
-		// 获取 logger 对象并更新日志级别
-		const logger = req.app.locals.logger as log4js.Logger;
-		logger.level = level;
-		res.send(`Logger level has been set to ${level}`);
-	}
-});
+
 
 //app.use(cors())
 app.use(express.static('public'))
@@ -65,7 +57,7 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 		body: body,
 		path: path
 	})
-		//console.log()
+	//console.log()
 	// 如果需要终止请求并返回响应，可以像下面这样：
 	// return res.status(401).send('Unauthorized');
 	// 否则，调用next()继续传递请求
@@ -73,19 +65,20 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 }
 
 
+const tokenInterceptor = (req: CustomRequest, res: Response, next: NextFunction) => {
 
-
-
-const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) => {
-
-	const publicPaths = ["/user/login", "/user/new", "/service/verifyToken","/service/sendEmailCode"];
+	const publicPaths = ["/user/login",
+												"/user/new",
+												"/service/verifyToken",
+												"/service/sendEmailCode",
+												"/logger/level"];
 	if (!publicPaths.some((path) => req.path.startsWith(path))) {
 		const loginToken = req.header('LoginToken')
 		if (!loginToken)
 			throw new Error('Error: 无访问权限 | No access rights')
 		AuthService.verifyToken(loginToken).then(
 			res => {
-				req.userInfo = {email : res.email}
+				req.userInfo = {email: res.email}
 				//console.log("user:" + res.email + " 通过token验证")
 				next()
 			}
@@ -95,20 +88,38 @@ const tokenInterceptor= (req: CustomRequest, res: Response, next: NextFunction) 
 				res.send({status: 'Unauthorized', message: error.message ?? 'Please authenticate.', data: null})
 			}
 		)
-	}else{
+	} else {
 		next()
 	}
 }
+
+
+
 
 //debug用
 app.use(interceptor)
 
 // 开发模式的时候, vite会重写URL, 这里用不上
 // 部署在nginx的时候 nginx会重写URL, 这里用不上
-// 部署在docker的时候,就需要express重写URL
+// 部署在docker的时候,就需要使用以下的路由重定向了
 app.use('/api/*', (req, res) => {
-	const newPath = req.originalUrl.replace(/^\/api\//, '/');
-	res.redirect(newPath);
+	const newPath = req.originalUrl.replace(/^\/api/, '');
+	req.url = newPath;
+	app(req, res);
+});
+
+/**
+ * http://xxxxxx:xxx/api/logger/level/debug/Qwe123
+ */
+app.get('/logger/level/:level/:pwd', (req: Request, res: Response) => {
+	const {level, pwd} = req.params;
+
+	if (pwd == "Qwe123") {
+		// 获取 logger 对象并更新日志级别
+		const logger = req.app.locals.logger as log4js.Logger;
+		logger.level = level;
+		res.send(`Logger level has been set to ${level}`);
+	}
 });
 
 // 注册所有需要验证令牌的路由

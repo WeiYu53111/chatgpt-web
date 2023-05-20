@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jsonwebtoken  from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 
 const secret = 'Qwe123!@#';
@@ -11,7 +11,7 @@ interface Payload {
 export class AuthService {
 	public static generateToken(payload: Payload): Promise<string> {
 		return new Promise((resolve, reject) => {
-			jwt.sign(payload, secret, { expiresIn: '12h' }, (error, token) => {
+			jsonwebtoken.sign(payload, secret, { expiresIn: '12h' }, (error, token) => {
 				if (error) {
 					reject(error);
 				} else {
@@ -23,7 +23,7 @@ export class AuthService {
 
 	public static verifyToken(token: string): Promise<Payload> {
 		return new Promise((resolve, reject) => {
-			jwt.verify(token, secret, (error, decoded) => {
+			jsonwebtoken.verify(token, secret, (error, decoded) => {
 				if (error) {
 					reject(error);
 				} else {
