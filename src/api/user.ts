@@ -1,5 +1,5 @@
 import {post} from "@/utils/request";
-
+import { SHA256 } from 'crypto-js';
 
 export interface Response {
 	status: string
@@ -24,14 +24,26 @@ export interface Token {
  * @param data
  */
 export function login<T>(data:UserInfo){
+
+	const newData = {
+		email: data.email,
+		password:  SHA256(data.password).toString(),
+		reenteredPassword: data.reenteredPassword,
+		emailCode: data.emailCode
+	}
+
 	return post<T>({
 		url: '/user/login',
-		data: data,
+		data: newData,
 	})
 }
 
 
 export function register<T>(data:UserInfo){
+
+	const newPassword = SHA256(data.password).toString()
+	data.password = newPassword
+	data.reenteredPassword = newPassword
 	//发起请求
 	return post<T>({
 		url: '/user/new',

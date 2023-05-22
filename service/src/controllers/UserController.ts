@@ -27,6 +27,11 @@ export class UserController {
 		try {
 			const data = req.body as User;
 			const row: User =  await userSevice.getUserByEmailAndPassword(data.email,data.password);
+			if(row === undefined){
+				res.send({ status: 'Fail', message: "用户或密码错误", data: null })
+				return;
+			}
+
 			let toekn = await AuthService.generateToken({
 				email: data.email
 			})

@@ -43,5 +43,6 @@ export const create_user_table = `
 		);
 
 	insert into users (email, password, vaild, level)
-	values ("admin@qq.com", "Qwe123!@#.", 1, 2);
+	values ("admin@qq.com", "12b242cde21be11412f2af47be89393a1cefba37a42dd86170c5f741b0a0e5f6", 1, 2);
 `;
+// Qwe123!@#.  sha-256加密后  12b242cde21be11412f2af47be89393a1cefba37a42dd86170c5f741b0a0e5f6
