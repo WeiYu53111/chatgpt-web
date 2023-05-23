@@ -53,6 +53,9 @@ COPY --from=frontend /app/dist /app/public
 COPY --from=backend /app/build /app/build
 #COPY --from=backend /app/.env /app/build
 
+# 设置时区
+ENV TZ=Asia/Shanghai
+
 EXPOSE 3002
 
 CMD ["pnpm", "run", "prod"]

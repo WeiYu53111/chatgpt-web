@@ -7,14 +7,18 @@ import {Request, Response, NextFunction} from 'express';
 import {AuthService} from "./services/AuthService";
 import {CustomRequest} from "./middleware/auth";
 import log4js from 'log4js';
-//import userSevice from "./services/UserService"
 
 //const cors = require('cors')
 const app = express()
 const user = new UserRoute();
 const pub = new PubRoute()
 const chatpgt = new ChatRoute()
-//const router = express.Router()
+const router = express.Router()
+
+// 直接在这里引入数据库对象强制初始化
+import  dbInstance  from "./infrastructure/SqliteUserRepository";
+dbInstance.initDb()
+
 
 const logger = log4js.getLogger('app');
 log4js.configure({
@@ -67,7 +71,8 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 
 const tokenInterceptor = (req: CustomRequest, res: Response, next: NextFunction) => {
 
-	const publicPaths = ["/user/login",
+	const publicPaths = [ "",
+												"/user/login",
 												"/user/new",
 												"/service/verifyToken",
 												"/service/sendEmailCode",
@@ -126,7 +131,7 @@ app.get('/logger/level/:level/:pwd', (req: Request, res: Response) => {
 app.use(tokenInterceptor);
 
 
-//app.use('', router)
+app.use('', router)
 app.use('/', chatpgt.getRouter())
 //app.use('/api', router)
 app.use('/user', user.getRouter());

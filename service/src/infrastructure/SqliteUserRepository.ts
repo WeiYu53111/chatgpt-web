@@ -1,34 +1,62 @@
 import sqlite3 from 'sqlite3';
 import {UserRepository} from '../repository/UserRepository';
 import {UserEntity, User} from '../domain/User';
-import {readFileSync} from "fs";
-import {resolve} from 'path';
-import {create_user_table} from "../db/create_db"
+import {create_user_table,create_table_stats,insert_table_users} from "../db/create_db"
 
 type Callback<T> = (err: Error | null, result?: T) => void;
-
-const CREATE_TABLE_SQL_FILE = "create_tables.sql"
 
 class SqliteUserRepository implements UserRepository {
 	private db: sqlite3.Database;
 
 	constructor(filename: string) {
-		this.db = new sqlite3.Database(filename);
-		this.initDb()
+		//this.db = new sqlite3.Database(filename);
+		//todo 实在太恶心了,得改啊!!!!!!!
+		this.db = new sqlite3.Database(filename, (err) => {
+			if (err) {
+				console.error(err.message);
+				throw err;
+			} else {
+				console.log('Connected to the SQLite database.');
+
+				this.db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
+					if (!row) {
+						this.db.serialize(() => {
+							this.db.run(create_user_table, (err) => {
+								if (err) {
+									console.log('Error creating users table:', err);
+									process.exit(1)
+								} else {
+									console.log('Users table created');
+									this.db.run(insert_table_users, []);
+								}
+							});
+
+							this.db.run(create_table_stats, (err) => {
+								if (err) {
+									console.log('Error creating users_stat table:', err);
+									process.exit(1)
+								} else {
+									console.log('users_stat table created');
+								}
+							});
+						});
+					}
+				})
+			}
+		});
 	}
 
 	public initDb() {
+		/*console.log(create_user_table)
 		const db = this.db
-		this.db.serialize(() => {
-			db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
-				if (!row) {
-					db.exec(create_user_table, (err) => {
-						if (err) console.log('Error creating table:', err);
-						process.exit(1)
-					});
-				}
-			});
-		});
+		this.db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
+			if (!row) {
+				db.exec(create_user_table, (err) => {
+					if (err) console.log('Error creating table:', err);
+					process.exit(1)
+				});
+			}
+		})*/
 	}
 
 	public async getAllUsers(): Promise<User[]> {
