@@ -18,8 +18,8 @@ class SqliteUserRepository implements UserRepository {
 			} else {
 				console.log('Connected to the SQLite database.');
 
-				this.db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
-					if (!row) {
+				/*this.db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='users'`, (err, row) => {
+					if (!row) {*/
 						this.db.serialize(() => {
 							this.db.run(create_user_table, (err) => {
 								if (err) {
@@ -27,7 +27,14 @@ class SqliteUserRepository implements UserRepository {
 									process.exit(1)
 								} else {
 									console.log('Users table created');
-									this.db.run(insert_table_users, []);
+								}
+							});
+
+							this.db.run(insert_table_users, (err)=>{
+								if(err){
+									console.log("user admin already exists")
+								}else{
+									console.log("insert user admin")
 								}
 							});
 
@@ -40,8 +47,8 @@ class SqliteUserRepository implements UserRepository {
 								}
 							});
 						});
-					}
-				})
+					/*}
+				})*/
 			}
 		});
 	}

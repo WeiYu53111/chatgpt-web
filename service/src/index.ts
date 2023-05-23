@@ -71,8 +71,7 @@ const interceptor = (req: Request, res: Response, next: NextFunction) => {
 
 const tokenInterceptor = (req: CustomRequest, res: Response, next: NextFunction) => {
 
-	const publicPaths = [ "",
-												"/user/login",
+	const publicPaths = [ "/user/login",
 												"/user/new",
 												"/service/verifyToken",
 												"/service/sendEmailCode",
