@@ -63,13 +63,11 @@ export default defineComponent({
 	},
 	setup() {
 
-
-
 		const formRef = ref<FormInst | null>(null)
 		const message = useMessage()
 		const modelRef = ref<UserInfo>({
-			email: "",
-			password: "",
+			email: "admin@qq.com",
+			password: "Qwe123!@#.",
 			reenteredPassword: "",
 			emailCode:""
 		})
@@ -95,7 +93,10 @@ export default defineComponent({
 							} else {
 								message.error(`登录失败: ${res.message ?? 'error'}`)
 							}
-						}
+						},
+						(errors=> {
+							message.error(`登录失败: ${errors.message ?? 'error'}`)
+						})
 					).catch((error) => {
 						message.error(error.message ?? 'error')
 					})

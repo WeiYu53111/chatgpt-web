@@ -19,6 +19,14 @@ export interface Token {
 	token:string
 }
 
+export interface UserData {
+	email:string,
+	create_time:string,
+	last_login_time:string,
+	usage:number
+	limit:number
+}
+
 /**
  * 登录
  * @param data
@@ -74,4 +82,14 @@ export async function verifyToken(token:string|null): Promise<boolean>{
 	})
 	return res.status === 'Success'
 
+}
+
+export async function getAllUserData():Promise<UserData[]> {
+	const res = await post<Response>({
+		url: '/stat/userdata',
+		data: {
+		}
+	});
+	const data = res.data as unknown as UserData[]
+	return  Promise.resolve(data);
 }

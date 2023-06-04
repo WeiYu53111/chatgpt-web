@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type{ AxiosResponse }  from 'axios'
+//import type{ AxiosResponse }  from 'axios'
 import {useAuthStore, useTokenStore} from '@/store'
 
 const service = axios.create({
@@ -23,7 +23,7 @@ service.interceptors.request.use(
     return Promise.reject(error.response)
   },
 )
-
+/*
 service.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
     if (response.status === 200)
@@ -34,6 +34,6 @@ service.interceptors.response.use(
   (error) => {
     return Promise.reject(error)
   },
-)
+)*/
 
 export default service

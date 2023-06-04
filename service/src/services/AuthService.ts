@@ -7,7 +7,6 @@ interface Payload {
 	email: string;
 }
 
-
 export class AuthService {
 	public static generateToken(payload: Payload): Promise<string> {
 		return new Promise((resolve, reject) => {
