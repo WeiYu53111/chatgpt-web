@@ -4,7 +4,6 @@ import { NLayout, NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 //import Permission from './Permission.vue'
-import {getRoute, UserRoute} from '@/api/user'
 //import PageHeader from "@/views/chat/layout/header/PageHeader.vue";
 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
