@@ -4,6 +4,7 @@ import { NLayout, NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 //import Permission from './Permission.vue'
+import {getRoute, UserRoute} from '@/api/user'
 //import PageHeader from "@/views/chat/layout/header/PageHeader.vue";
 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -34,6 +35,25 @@ const getContainerClass = computed(() => {
     { 'pl-[260px]': !isMobile.value && !collapsed.value },
   ]
 })
+/*
+
+//动态添加路由
+await getRoute("admin").then(
+	(rs:UserRoute[]|null)=>{
+		if(rs){
+			for (let i = 0; i <rs.length; i++) {
+				router.addRoute({
+					path: rs[i].path,
+					component: () => import('@/views/'+"admin"+'.vue')
+				})
+			}
+		}
+	}
+)
+*/
+
+
+
 </script>
 
 <template>

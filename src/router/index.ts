@@ -45,13 +45,10 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 	{
-		path: '/admin',
-		name: 'admin',
-		meta: { skipCheck: true },
+		path: '/mana',
+		name: 'mana',
 		component: () => import('@/views/admin.vue'),
 	},
-
-
   {
     path: '/404',
     name: '404',

@@ -1,6 +1,7 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
 import request from './axios'
 import { useAuthStore,useTokenStore } from '@/store'
+import {router} from "@/router";
 
 export interface HttpOption {
   url: string
@@ -19,6 +20,7 @@ export interface Response<T = any> {
   status: string
 }
 
+
 function http<T = any>(
   { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
 ) {
@@ -32,8 +34,8 @@ function http<T = any>(
     if (res.data.status === 'Unauthorized') {
       authStore.removeToken()
 			tokenStore.clearToken()
-			//TODO 此处发现没授权直接跳转到登录页有点突兀待优化
-      window.location.reload()
+			//TODO 此处会导致需要重新登录,目标是想跳回首页
+			router.push("/404")
     }
 
     return Promise.reject(res.data)

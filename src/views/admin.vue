@@ -67,7 +67,7 @@ export default defineComponent({
 	setup () {
 		return {
 			activeKey: ref<string | null>(null),
-			collapsed: ref(true),
+			collapsed: ref(false),
 			menuOptions,
 			handleUpdateValue (key: string, item: MenuOption) {
 				//this.$router.push("/admin/"+key);

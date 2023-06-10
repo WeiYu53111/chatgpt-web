@@ -93,3 +93,28 @@ export async function getAllUserData():Promise<UserData[]> {
 	const data = res.data as unknown as UserData[]
 	return  Promise.resolve(data);
 }
+
+
+export interface UserRoute {
+	path: string,
+	component: string
+}
+
+export async function getRoute(name:string):Promise<UserRoute[]|null>{
+	/*const res = await post<Response>({
+		url: '/user/route'
+	});
+	const data = res.data as unknown as UserRoute*/
+	let data = null
+
+	if(name==="admin"){
+		data = [{
+			path: "/admin",
+			component: ""
+		}]
+	}else{
+		data = null
+	}
+
+	return  Promise.resolve(data);
+}

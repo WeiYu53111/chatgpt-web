@@ -1,8 +1,5 @@
 <template>
 	<NSpace :size="12" vertical>
-		<NSpace>
-			<NButton @click="sortName">Sort By Email (Ascend)</NButton>
-		</NSpace>
 		<NDataTable
 			ref="table"
 			:columns="columns"

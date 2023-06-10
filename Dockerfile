@@ -15,47 +15,21 @@ COPY . /app
 
 RUN pnpm run build
 
-# build backend
-FROM node:lts-alpine as backend
+ADD .env /app/dist
 
-RUN npm install pnpm -g
 
-WORKDIR /app
+# nginx
+FROM nginx:alpine3.17
 
-COPY ./service/package.json /app
+# 将 ./nginx.conf 复制到容器中的 /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY ./service/pnpm-lock.yaml /app
-
-RUN pnpm install
-
-COPY ./service /app
-
-RUN pnpm build
-
-# service
-FROM node:lts-alpine
-
-# 为了安装sqlite3需要安装一些编译工具
-RUN npm install pnpm -g
-
-WORKDIR /app
-
-COPY ./service/package.json /app
-COPY ./service/pnpm-lock.yaml /app
-
-# 安装sqlite3
-# RUN pnpm install sqlite3
-RUN pnpm install --production && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
-
-COPY ./service /app
-ADD ./service/.env /app/build/.env
-COPY --from=frontend /app/dist /app/public
-COPY --from=backend /app/build /app/build
-#COPY --from=backend /app/.env /app/build
+# 将之前构建好的生产模式下的静态资源复制到 Nginx 的默认目录下
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # 设置时区
 ENV TZ=Asia/Shanghai
 
-EXPOSE 3002
-
-CMD ["pnpm", "run", "prod"]
+EXPOSE 80
+# 在容器启动时运行 Nginx 服务
+CMD ["nginx", "-g", "daemon off;"]

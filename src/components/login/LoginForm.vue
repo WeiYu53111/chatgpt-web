@@ -66,8 +66,8 @@ export default defineComponent({
 		const formRef = ref<FormInst | null>(null)
 		const message = useMessage()
 		const modelRef = ref<UserInfo>({
-			email: "admin@qq.com",
-			password: "Qwe123!@#.",
+			email: "531115357@qq.com",
+			password: "123456",
 			reenteredPassword: "",
 			emailCode:""
 		})
