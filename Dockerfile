@@ -19,7 +19,7 @@ ADD .env /app/dist
 
 
 # nginx
-FROM nginx:1.25-alpine
+FROM nginx:alpine3.17
 
 
 
