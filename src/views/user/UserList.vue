@@ -16,7 +16,7 @@ import {getAllUserData, UserData} from "@/api/user"
 const columns = [
 	{
 		title: '账号',
-		key: 'name',
+		key: 'email',
 		//defaultSortOrder: 'ascend',
 		/*defaultSortOrder: 'ascend',
 		sorter: 'default'*/

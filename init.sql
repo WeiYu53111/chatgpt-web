@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS users_stat (
     UNIQUE(squad_date, email)
 );
 
-/*   Qwe123!@#.  sha-256加密后  12b242cde21be11412f2af47be89393a1cefba37a42dd86170c5f741b0a0e5f6   */
+/*   Qwe123!@#.  sha-256加密后  0b9ac3709d0a1c1771dc00d8899fbcebd6e375e1cc4ddb3e50fd1c5951a25223   */
 insert into users (email, password,level)
-values ("admin@qq.com", "12b242cde21be11412f2af47be89393a1cefba37a42dd86170c5f741b0a0e5f6",0);
+values ("admin@qq.com", "0b9ac3709d0a1c1771dc00d8899fbcebd6e375e1cc4ddb3e50fd1c5951a25223",0);
