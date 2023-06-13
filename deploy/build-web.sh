@@ -1,0 +1,1 @@
+docker build -t web:v0.1 -f ../web/Dockerfile

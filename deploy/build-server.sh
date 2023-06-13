@@ -1,0 +1,1 @@
+docker build -t nest:v0.1 -f ../server/Dockerfile
