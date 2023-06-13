@@ -1,6 +1,6 @@
 import {post} from "@/utils/request";
 import { SHA256 } from 'crypto-js';
-
+import * as CryptoJS from 'crypto-js';
 export interface Response {
 	status: string
 	data: any
@@ -33,7 +33,16 @@ export interface UserData {
  */
 export function login<T>(data:UserInfo){
 
-	const newData = {
+	const input = data.password;
+	const binaryInput = CryptoJS.enc.Utf8.parse(input);
+	const hash = CryptoJS.SHA256(binaryInput);
+	const en_pass = CryptoJS.enc.Hex.stringify(hash);
+
+	console.log(en_pass);
+
+
+	return
+	/*const newData = {
 		email: data.email,
 		password:  SHA256(data.password).toString(),
 		reenteredPassword: data.reenteredPassword,
@@ -43,7 +52,7 @@ export function login<T>(data:UserInfo){
 	return post<T>({
 		url: '/user/login',
 		data: newData,
-	})
+	})*/
 }
 
 
