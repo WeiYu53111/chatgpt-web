@@ -38,13 +38,9 @@ export function login<T>(data:UserInfo){
 	const hash = CryptoJS.SHA256(binaryInput);
 	const en_pass = CryptoJS.enc.Hex.stringify(hash);
 
-	console.log(en_pass);
-
-
-	return
-	/*const newData = {
+	const newData = {
 		email: data.email,
-		password:  SHA256(data.password).toString(),
+		password:  en_pass,
 		reenteredPassword: data.reenteredPassword,
 		emailCode: data.emailCode
 	}
@@ -52,7 +48,7 @@ export function login<T>(data:UserInfo){
 	return post<T>({
 		url: '/user/login',
 		data: newData,
-	})*/
+	})
 }
 
 

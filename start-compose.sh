@@ -6,8 +6,7 @@ if [ "$1" == "start" ]; then
 elif [ "$1" == "stop" ]; then
     docker-compose -f ./deploy/docker-compose/docker-compose.yml down
 elif [ "$1" == "build" ]; then
-
-    ./deploy/build-server.sh && ./deploy/build-web.sh
+    sh ./deploy/build-server.sh && sh ./deploy/build-web.sh
 else
     echo "Usage: $0 [start|stop|build]"
 fi
