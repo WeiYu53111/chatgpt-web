@@ -77,6 +77,20 @@ export function sendEmailCode<T>(email: string) {
 	})
 }
 
+export function resetPw<T>(data:UserInfo){
+
+	//TODO 使用jsencrypt 加密密码
+	const newPassword = SHA256(data.password).toString()
+	data.password = newPassword
+	data.reenteredPassword = newPassword
+	//发起请求
+	return post<T>({
+		url: '/user/reset',
+		data: data,
+	})
+}
+
+
 export async function verifyToken(token:string|null): Promise<boolean>{
 
 	if(token === null){

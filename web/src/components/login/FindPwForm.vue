@@ -1,7 +1,7 @@
 <template>
 	<NCard title="" class="shadow-md">
 		<div class="pb-3 font-medium flex justify-between  items-center">
-			<span class="text-2xl mr-auto">注册</span>
+			<span class="text-2xl mr-auto">重设密码</span>
 			<!--				<NButton class="ml-2 self-center">账号登录</NButton>-->
 			<NButton class="ml-2 self-center" @click="toLogin">登录</NButton>
 		</div>
@@ -9,7 +9,7 @@
 			<NFormItem path="email" label="邮箱" class="w-96">
 				<NInput v-model:value="registerInfo.email" @keydown.enter.prevent/>
 			</NFormItem>
-			<NFormItem path="password" label="密码" class="w-96">
+			<NFormItem path="password" label="新密码" class="w-96">
 				<NInput
 					v-model:value="registerInfo.password"
 					type="password"
@@ -22,7 +22,7 @@
 				ref="rPasswordFormItemRef"
 				first
 				path="reenteredPassword"
-				label="重复密码"
+				label="确认密码"
 				class="w-96"
 			>
 				<NInput
@@ -96,7 +96,7 @@ export default defineComponent({
 		const formRef = ref<FormInst | null>(null)
 		const rPasswordFormItemRef = ref<FormItemInst | null>(null)
 		const message = useMessage()
-	  let buttonDisabled = ref(false)
+		let buttonDisabled = ref(false)
 		const modelRef = ref<UserInfo>({
 			email: "",
 			password: "",
@@ -208,15 +208,15 @@ export default defineComponent({
 					if (errors) return;
 					try {
 						register<Response>(modelRef.value).then(
-								(res) => {
-									if (isSuccess(res)) {
-										message.success("注册成功,正在前往登录")
-										router.push("/login")
-									} else {
-										message.error(`注册失败: ${res.message ?? 'error'}`)
-									}
+							(res) => {
+								if (isSuccess(res)) {
+									message.success("注册成功,正在前往登录")
+									router.push("/login")
+								} else {
+									message.error(`注册失败: ${res.message ?? 'error'}`)
 								}
-							).catch((error) => {
+							}
+						).catch((error) => {
 							message.error(error.message ?? 'error')
 						})
 					} catch (error: any) {

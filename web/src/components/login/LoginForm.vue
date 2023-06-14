@@ -1,8 +1,8 @@
 <template>
 	<NCard title="" class="shadow-md">
 		<NSpace vertical>
-			<div class="p-3 font-medium flex justify-between  items-center">
-				<span class="text-xl mr-auto">登录</span>
+			<div class="pb-3 font-medium flex justify-between  items-center">
+				<span class="text-2xl mr-auto">登录</span>
 				<!--				<NButton class="ml-2 self-center">账号登录</NButton>-->
 				<NButton class="ml-2 self-center" @click="toRegister">注册</NButton>
 			</div>
@@ -19,7 +19,12 @@
 				</NFormItem>
 				<NRow :gutter="[0, 24]">
 					<NCol :span="24">
-						<div style="display: flex; justify-content: flex-end">
+						<div style="display: flex; : space-between; align-items: center;">
+							<div style="flex-grow: 1;">
+								<NButton text="true" style="margin-left: 5px" @click="toFindPassword">
+									忘记密码
+								</NButton>
+							</div>
 							<NButton
 								class="shadow-md hover:shadow-lg"
 								:disabled="userInfo.email === null"
@@ -104,6 +109,10 @@ export default defineComponent({
 			})
 		}
 
+		function toFindPassword() {
+			router.push("/findPw")
+		}
+
 		function toRegister() {
 			router.push("/register")
 		}
@@ -129,7 +138,8 @@ export default defineComponent({
 			userInfo: modelRef,
 			rules,
 			handleValidateButtonClick,
-			toRegister
+			toRegister,
+			toFindPassword
 		}
 	}
 })

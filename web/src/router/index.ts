@@ -23,6 +23,14 @@ const routes: RouteRecordRaw[] = [
 		name: 'register',
 		component: () => import('@/views/user/Register.vue'),
 	},
+
+	{
+		path: '/findPw',
+		name: 'findPw',
+		meta: { skipCheck: true },
+		component: () => import('@/views/user/FindPW.vue'),
+	},
+
 	/*{
 		path: '/chat/:uuid?',
 		name: 'Chat',
