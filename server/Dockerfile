@@ -1,5 +1,5 @@
 # service
-FROM node:lts-alpine
+FROM node:18.16
 
 
 WORKDIR /app
