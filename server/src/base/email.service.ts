@@ -31,11 +31,6 @@ export class EmailService {
             this.transporter = nodemailer.createTransport({
                 host: this.appConfigService.getEmailServer(),
                 port: this.appConfigService.getEmailServerPort(),
-                secure: true, // 使用TLS加密
-                tls: {
-                    rejectUnauthorized: false,
-                    minVersion: 'TLSv1'
-                },
                 auth: {
                     user: this.appConfigService.getEmailUser(), // 请替换成您自己的电子邮件地址
                     pass: this.appConfigService.getEmailPassword(), // 请替换成您自己的电子邮件密码或应用程序密码（如果使用的是Google帐户）
