@@ -70,7 +70,7 @@
 
 import {defineComponent, ref} from 'vue'
 import { isSuccess} from '@/utils/functions'
-import { register, Response, sendEmailCode, UserInfo} from '@/api/user'
+import {register, resetPw, Response, sendEmailCode, UserInfo} from '@/api/user'
 import {
 	FormInst,
 	FormItemInst,
@@ -207,13 +207,13 @@ export default defineComponent({
 				formRef.value?.validate((errors) => {
 					if (errors) return;
 					try {
-						register<Response>(modelRef.value).then(
+						resetPw<Response>(modelRef.value).then(
 							(res) => {
 								if (isSuccess(res)) {
-									message.success("注册成功,正在前往登录")
+									message.success("重置成功,正在前往登录")
 									router.push("/login")
 								} else {
-									message.error(`注册失败: ${res.message ?? 'error'}`)
+									message.error(`重置失败: ${res.message ?? 'error'}`)
 								}
 							}
 						).catch((error) => {

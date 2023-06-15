@@ -67,4 +67,31 @@ export class UserController {
 		}
 	}
 
+
+	@Post("updatePw")
+	public async updatePw(@Body() userDto: UserRegisterDto): Promise<Response>{
+		if (!this.emailService.checkEmailCode(userDto.email, userDto.emailCode)) {
+			return Promise.resolve({
+				data: "",
+				message: "验证码错误或超时",
+				status: "Fail"
+			});
+		}
+
+		//RSA解密
+
+
+		try {
+			const result: any = await this.userService.createUser(userDto);
+			return Promise.resolve({
+				data: "",
+				message: "注册成功",
+				status: "Success"
+			});
+		} catch (err) {
+			this.logger.error(err);
+			return Promise.resolve({ status: 'Fail', message: err.message, data: null })
+		}
+	}
+
 }

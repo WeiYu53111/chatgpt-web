@@ -36,10 +36,7 @@ export function login<T>(data:UserInfo){
 	const input = data.password;
 	const binaryInput = CryptoJS.enc.Utf8.parse(input);
 	const hash = CryptoJS.SHA256(binaryInput);
-	const en_pass2 = hash.toString()
-	console.log(en_pass2)
 	const en_pass = CryptoJS.enc.Hex.stringify(hash);
-	console.log(en_pass)
 
 	const newData = {
 		email: data.email,
@@ -56,6 +53,8 @@ export function login<T>(data:UserInfo){
 
 
 export function register<T>(data:UserInfo){
+
+
 
 	const newPassword = SHA256(data.password).toString()
 	data.password = newPassword
@@ -89,7 +88,6 @@ export function resetPw<T>(data:UserInfo){
 		data: data,
 	})
 }
-
 
 export async function verifyToken(token:string|null): Promise<boolean>{
 

@@ -76,4 +76,13 @@ export class UserService {
         u.create_time = new Date()
         await this.usersRepository.save(u)
     }
+
+    public async updatePw(userDto: UserRegisterDto) {
+        const email = userDto.email
+        await this.usersRepository.createQueryBuilder()
+            .update(User)
+            .set({ password:  userDto.password})
+            .where('email = :email', { email })
+            .execute();
+    }
 }
