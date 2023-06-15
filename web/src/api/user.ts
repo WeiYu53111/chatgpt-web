@@ -1,6 +1,7 @@
 import {post} from "@/utils/request";
-import { SHA256 } from 'crypto-js';
-import * as CryptoJS from 'crypto-js';
+import {rsaEncode} from "@/utils/crypto";
+
+
 export interface Response {
 	status: string
 	data: any
@@ -33,15 +34,14 @@ export interface UserData {
  */
 export function login<T>(data:UserInfo){
 
-	const input = data.password;
-	const binaryInput = CryptoJS.enc.Utf8.parse(input);
-	const hash = CryptoJS.SHA256(binaryInput);
-	const en_pass = CryptoJS.enc.Hex.stringify(hash);
-
+	// rsa加密密码
+	const encryptedStr = rsaEncode(data.password)
+	// 将加密结果转换为 base64 编码格式
+	const newPassword = btoa(encryptedStr.toString());
 	const newData = {
 		email: data.email,
-		password:  en_pass,
-		reenteredPassword: data.reenteredPassword,
+		password:  newPassword,
+		reenteredPassword: "",
 		emailCode: data.emailCode
 	}
 
@@ -53,16 +53,20 @@ export function login<T>(data:UserInfo){
 
 
 export function register<T>(data:UserInfo){
-
-
-
-	const newPassword = SHA256(data.password).toString()
-	data.password = newPassword
-	data.reenteredPassword = newPassword
+	// rsa加密密码
+	const encryptedStr = rsaEncode(data.password)
+	// 将加密结果转换为 base64 编码格式
+	const newPassword = btoa(encryptedStr.toString());
+	const newData = {
+		email: data.email,
+		password:  newPassword,
+		reenteredPassword: "",
+		emailCode: data.emailCode
+	}
 	//发起请求
 	return post<T>({
 		url: '/user/new',
-		data: data,
+		data: newData,
 	})
 }
 
@@ -77,15 +81,21 @@ export function sendEmailCode<T>(email: string) {
 }
 
 export function resetPw<T>(data:UserInfo){
+	// rsa加密密码
+	const encryptedStr = rsaEncode(data.password)
+	// 将加密结果转换为 base64 编码格式
+	const encodedStr = btoa(encryptedStr.toString());
 
-	//TODO 使用jsencrypt 加密密码
-	const newPassword = SHA256(data.password).toString()
-	data.password = newPassword
-	data.reenteredPassword = newPassword
+	const newData = {
+		email: data.email,
+		password:  encodedStr,
+		reenteredPassword: "",
+		emailCode: data.emailCode
+	}
 	//发起请求
 	return post<T>({
 		url: '/user/reset',
-		data: data,
+		data: newData,
 	})
 }
 

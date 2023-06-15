@@ -1,143 +1,170 @@
-import {Injectable, Logger, OnModuleInit, Req, Res, Sse} from '@nestjs/common';
-import {RequestProps} from "../interface/response.interface";
-import {Request, Response} from "express";
-import {UserService} from "../user/user.service";
-import {StatService} from "../stat/stat.service";
-import {isNotEmptyString} from "../util/is";
-import {sendResponse} from "../util";
-import {ApiModel} from "./types";
-import {Observable} from "rxjs";
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  Req,
+  Res,
+  Sse,
+} from '@nestjs/common';
+import { RequestProps } from '../interface/response.interface';
+import { Request, Response } from 'express';
+import { UserService } from '../user/user.service';
+import { StatService } from '../stat/stat.service';
+import { isNotEmptyString } from '../util/is';
+import { sendResponse } from '../util';
+import { ApiModel } from './types';
+import { Observable } from 'rxjs';
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-export const importDynamic = new Function('modulePath', 'return import(modulePath)');
-
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+export const importDynamic = new Function(
+  'modulePath',
+  'return import(modulePath)',
+);
 
 @Injectable()
 export class ChatService implements OnModuleInit {
+  gptApi: any;
+  ChatMessage: any;
+  ChatGPTAPIOptions: any;
+  SendMessageOptions: any;
+  timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS)
+    ? +process.env.TIMEOUT_MS
+    : 100 * 1000;
+  apiModel: ApiModel = 'ChatGPTAPI';
+  model = isNotEmptyString(process.env.OPENAI_API_MODEL)
+    ? process.env.OPENAI_API_MODEL
+    : 'gpt-3.5-turbo';
 
-    gptApi: any;
-    ChatMessage:any;
-    ChatGPTAPIOptions:any;
-    SendMessageOptions:any;
-    timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 100 * 1000;
-    apiModel: ApiModel = 'ChatGPTAPI';
-    model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo';
+  private readonly logger = new Logger(ChatService.name);
+  constructor(
+    private userService: UserService,
+    private statService: StatService,
+  ) {}
 
-    private readonly logger = new Logger(ChatService.name);
-    constructor(private userService: UserService,private statService: StatService) {
+  async onModuleInit() {
+    await this.initGPT();
+  }
+  async initGPT() {
+    const { ChatGPTAPI, ChatMessage, ChatGPTAPIOptions, SendMessageOptions } =
+      await importDynamic('chatgpt');
+    this.ChatMessage = typeof ChatMessage;
+    this.ChatGPTAPIOptions = typeof ChatGPTAPIOptions;
+    this.SendMessageOptions = typeof SendMessageOptions;
+    this.ChatMessage = typeof ChatMessage;
 
+    const disableDebug: boolean =
+      process.env.OPENAI_API_DISABLE_DEBUG === 'true';
+    const model = isNotEmptyString(process.env.OPENAI_API_MODEL)
+      ? process.env.OPENAI_API_MODEL
+      : 'gpt-3.5-turbo';
+
+    const options: typeof ChatGPTAPIOptions = {
+      apiKey: process.env.OPENAI_API_KEY,
+      completionParams: { model },
+      debug: !disableDebug,
+    };
+
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY missing');
     }
 
-    async onModuleInit() {
-        await this.initGPT();
+    const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL;
+    if (isNotEmptyString(OPENAI_API_BASE_URL))
+      options.apiBaseUrl = `${OPENAI_API_BASE_URL}/v1`;
+
+    try {
+      this.logger.log('Creating ChatGPT Api');
+      this.gptApi = new ChatGPTAPI({ ...options });
+
+      //this.logger.log('Sending test message');
+
+      //const result = await this.sendMessage('Hello World!')
+      //console.log(`${result?.text} from ${result?.id}`);
+    } catch (e) {
+      console.log(e);
     }
-    async initGPT() {
-        const { ChatGPTAPI,ChatMessage,ChatGPTAPIOptions,SendMessageOptions } = await importDynamic('chatgpt');
-        this.ChatMessage = typeof ChatMessage;
-        this.ChatGPTAPIOptions = typeof ChatGPTAPIOptions;
-        this.SendMessageOptions = typeof SendMessageOptions;
-        this.ChatMessage = typeof ChatMessage
+  }
 
-        const disableDebug: boolean = process.env.OPENAI_API_DISABLE_DEBUG === 'true'
-        const model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo'
+  async send(@Req() req: Request, @Res() res: Response) {
+    res.setHeader('Content-type', 'application/octet-stream');
+    try {
+      const email = req['userInfo'].email;
+      //查询用户等级
+      const user = await this.userService.findUserByName(email);
+      //查询用户今日查询次数
+      const count = await this.statService.getQueryCount(email);
+      //console.log(count);
+      if (user.level === 1 && count >= 10) {
+        await Promise.reject({
+          message: '今日可提问次数已达上限,请明日再来思密达' ?? 'Failed',
+          data: null,
+          status: 'Failed',
+        });
+      }
 
-        const options: typeof ChatGPTAPIOptions = {
-            apiKey: process.env.OPENAI_API_KEY,
-            completionParams: { model },
-            debug: !disableDebug,
+      const {
+        prompt,
+        options = {},
+        systemMessage,
+        temperature,
+        top_p,
+      } = req.body as RequestProps;
+      let firstChunk = true;
+      const lastContext = options;
+      const message = prompt;
+      const process = (chat: typeof this.ChatMessage) => {
+        res.write(
+          firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`,
+        );
+        firstChunk = false;
+      };
+      //const { message, lastContext, process, systemMessage, temperature, top_p } = paraObj
+      const result = { type: 'Success', data: null };
+      try {
+        const options: typeof this.SendMessageOptions = {
+          timeoutMs: this.timeoutMs,
+        };
+
+        if (isNotEmptyString(systemMessage))
+          options.systemMessage = systemMessage;
+
+        options.completionParams = {
+          model: this.model,
+          temperature: temperature,
+          top_p: top_p,
+        };
+
+        if (lastContext != null) {
+          options.parentMessageId = lastContext.parentMessageId;
         }
 
-        if (!process.env.OPENAI_API_KEY) {
-            throw new Error("OPENAI_API_KEY missing");
-        }
-
-        const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL
-        if (isNotEmptyString(OPENAI_API_BASE_URL))
-            options.apiBaseUrl = `${OPENAI_API_BASE_URL}/v1`
-
-        try {
-            this.logger.log('Creating ChatGPT Api')
-            this.gptApi = new ChatGPTAPI({ ...options })
-
-            //this.logger.log('Sending test message');
-
-            //const result = await this.sendMessage('Hello World!')
-            //console.log(`${result?.text} from ${result?.id}`);
-
-        }
-        catch (e) {
-            console.log(e);
-        }
-
+        const response = await this.gptApi.sendMessage(message, {
+          ...options,
+          onProgress: (partialResponse) => {
+            process?.(partialResponse);
+          },
+        });
+        //更新提问次数
+        await sendResponse({ type: 'Success', data: response });
+        await this.statService.updateQueryCountByEmail(email, count + 1);
+      } catch (error: any) {
+        const code = error.statusCode;
+        if (Reflect.has(ErrorCodeMessage, code))
+          await sendResponse({ type: 'Fail', message: ErrorCodeMessage[code] });
+        await sendResponse({
+          type: 'Fail',
+          message: error.message ?? 'Please check the back-end console',
+        });
+      }
+    } catch (error) {
+      this.logger.error(error);
+      res.write(JSON.stringify(error));
+    } finally {
+      res.end();
     }
+  }
 
-    async send(@Req() req: Request,@Res() res:Response){
-        res.setHeader('Content-type', 'application/octet-stream')
-        try {
-            const email = req["userInfo"].email
-            //查询用户等级
-            const user =  await this.userService.findUserByName(email)
-            //查询用户今日查询次数
-            let count =  await this.statService.getQueryCount(email)
-            console.log(count)
-            if(user.level === 1 && count >= 10){
-                await Promise.reject({
-                    message: "今日可提问次数已达上限,请明日再来思密达" ?? 'Failed',
-                    data: null,
-                    status: 'Failed',
-                })
-            }
-
-            const {prompt, options = {}, systemMessage, temperature, top_p} = req.body as RequestProps
-            let firstChunk = true
-            const lastContext = options;
-            const message = prompt;
-            const process = (chat: typeof this.ChatMessage) => {
-                res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
-                firstChunk = false
-            }
-            //const { message, lastContext, process, systemMessage, temperature, top_p } = paraObj
-            const result  = { type: 'Success', data: null }
-            try {
-                let options: typeof this.SendMessageOptions = { timeoutMs:this.timeoutMs }
-
-                if (isNotEmptyString(systemMessage))
-                    options.systemMessage = systemMessage
-
-                options.completionParams = {
-                    model: this.model,
-                    temperature:temperature,
-                    top_p:top_p }
-
-                if (lastContext != null) {
-                    options.parentMessageId = lastContext.parentMessageId
-                }
-
-                const response = await this.gptApi.sendMessage(message, {
-                    ...options,
-                    onProgress: (partialResponse) => {
-                        process?.(partialResponse)
-                    },
-                })
-                //更新提问次数
-                await sendResponse({ type: 'Success', data: response })
-                await this.statService.updateQueryCountByEmail(email,count+1);
-            }
-            catch (error: any) {
-                const code = error.statusCode
-                if (Reflect.has(ErrorCodeMessage, code))
-                    await sendResponse({ type: 'Fail', message: ErrorCodeMessage[code] })
-                await sendResponse({ type: 'Fail', message: error.message ?? 'Please check the back-end console' })
-            }
-        } catch (error) {
-            this.logger.error(error)
-            res.write(JSON.stringify(error))
-        } finally {
-            res.end()
-        }
-    }
-
-    /*async sendMessage(message: string, parentMessageId?: string) {
+  /*async sendMessage(message: string, parentMessageId?: string) {
 
         if (!message || message.length === 0) {
             throw new Error("Message is empty");
@@ -163,9 +190,7 @@ export class ChatService implements OnModuleInit {
         }
     }*/
 
-
-
-    /*
+  /*
         async chatReplyProcess(options: ReqOptions) {
             const { message, lastContext, process, systemMessage, temperature, top_p } = options
             try {
@@ -244,22 +269,24 @@ export class ChatService implements OnModuleInit {
 }
 
 const ErrorCodeMessage: Record<string, string> = {
-    401: '[OpenAI] 提供错误的API密钥 | Incorrect API key provided',
-    403: '[OpenAI] 服务器拒绝访问，请稍后再试 | Server refused to access, please try again later',
-    502: '[OpenAI] 错误的网关 |  Bad Gateway',
-    503: '[OpenAI] 服务器繁忙，请稍后再试 | Server is busy, please try again later',
-    504: '[OpenAI] 网关超时 | Gateway Time-out',
-    500: '[OpenAI] 服务器繁忙，请稍后再试 | Internal Server Error',
-}
+  401: '[OpenAI] 提供错误的API密钥 | Incorrect API key provided',
+  403: '[OpenAI] 服务器拒绝访问，请稍后再试 | Server refused to access, please try again later',
+  502: '[OpenAI] 错误的网关 |  Bad Gateway',
+  503: '[OpenAI] 服务器繁忙，请稍后再试 | Server is busy, please try again later',
+  504: '[OpenAI] 网关超时 | Gateway Time-out',
+  500: '[OpenAI] 服务器繁忙，请稍后再试 | Internal Server Error',
+};
 
 function formatDate(): string[] {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = today.getMonth() + 1
-    const lastDay = new Date(year, month, 0)
-    const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`
-    const formattedLastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`
-    return [formattedFirstDay, formattedLastDay]
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const lastDay = new Date(year, month, 0);
+  const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`;
+  const formattedLastDay = `${year}-${month
+    .toString()
+    .padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`;
+  return [formattedFirstDay, formattedLastDay];
 }
 
 /*
@@ -301,9 +328,9 @@ export interface ReqOptions {
 }
 */
 export interface SetProxyOptions {
-    fetch?: typeof fetch
+  fetch?: typeof fetch;
 }
 
 export interface UsageResponse {
-    total_usage: number
+  total_usage: number;
 }
