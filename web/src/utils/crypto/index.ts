@@ -28,6 +28,7 @@ const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
 	"-----END RSA PUBLIC KEY-----";
 // 创建 JSEncrypt 实例
 const encryptor = new JSEncrypt();
+
 encryptor.setPublicKey(pub_key);
 const encoding = 'utf-8'; // 明文编码方式
 const encoder = new TextEncoder(); // 创建编码器

@@ -21,14 +21,10 @@ ADD .env /app/dist
 # nginx
 FROM nginx:alpine3.17
 
-
-
 RUN mkdir /app
 
 # 将之前构建好的生产模式下的静态资源复制到 Nginx 的默认目录下
 COPY --from=frontend /app/dist /app
-# 将 ./nginx.conf 复制到容器中的 /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf/nginx.conf
 
 # 设置时区
 ENV TZ=Asia/Shanghai
