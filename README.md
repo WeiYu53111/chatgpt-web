@@ -6,17 +6,28 @@
 
 ## docker-compose
 
-```shell
 
-# 准备好代码
+
+### step1.准备好代码
+```
 git clone https://github.com/WeiYu53111/chatgpt-web.git
 cd chatgpt-web
 chmod +x ./start-compose.sh
+```
 
-# 数据库挂载目录默认是 chatgpt-web/mysql,如果要修改则需要修改 deploy/docker-compose/docker-compose.yml
+### step2.创建数据库存储目录
+
+数据库挂载目录默认是当前目录的`mysql`文件夹,如果要修改则需要修改
+`deploy/docker-compose/docker-compose.yml`
+
+```shell
 mkdir mysql
+```
 
-# 修改/web/src/utils/crypto/index.ts 文件,将公钥更新上去如下
+### step3.更新web的公钥
+修改`web/src/utils/crypto/index.ts` 文件中的公钥, 修改为你自己的公钥
+修改示例如下：
+```typescript
 const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
 	"MIIBCgKCAQEAh6ahoQ6x42ds+vVK8uVYt2tWHJ2+P/yDNwboSadkDJoR8XWqO7bZ\n" +
 	"iAalONDVOHByhCRUC8Iakbsequs343A7ON7odnbPBmgNTsLONOVad5EcNBEAsHNo\n" +
@@ -25,19 +36,26 @@ const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
 	"61TmsFdMpVJ9q7v4dVymEyv4RGoQR4MYau9xGHUT27LZJT4QTliM5ZN9Pn0nni6t\n" +
 	"V2ASS7kG4S3PvL03epg/ynTU1vsCuREfXQIDAQAB\n" +
 	"-----END RSA PUBLIC KEY-----";
-
-# 将私钥以及.env 配置文件放到 server目录下
-...
-
-# 构建镜像
-./start-compose.sh build
-
-
-# 启动服务
-./start-compose.sh start -d
 ```
 
+### step4.放置私钥以及配置文件.env到
+私钥文件名称需要与`.env`配置文件中的`RSA_FILE`配置项一致
+```.properties
+RSA_FILE=pri_20230616.pri
+```
+则私钥文件名为`pri_20230616.pri`.
 
+将私钥以及.env 配置文件放到`server`根目录下
+
+### step5.构建镜像
+```shell
+./start-compose.sh build
+```
+
+### step6.启动服务
+```shell
+./start-compose.sh start -d
+```
 
 # 生成公私钥
 
