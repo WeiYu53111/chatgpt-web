@@ -1,12 +1,12 @@
 # build front-end
 FROM node:18.16 AS frontend
 
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install pnpm -g
 
 WORKDIR /app
 
 COPY ./package.json /app
-
 COPY ./pnpm-lock.yaml /app
 
 RUN pnpm install

@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./package*.json ./
 COPY ./pnpm-lock.yaml ./
 
-
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install pnpm -g
 RUN pnpm install
 RUN npm i -g @nestjs/cli
