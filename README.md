@@ -13,6 +13,9 @@ git clone https://github.com/WeiYu53111/chatgpt-web.git
 cd chatgpt-web
 chmod +x ./start-compose.sh
 
+# 数据库挂载目录默认是 chatgpt-web/mysql,如果要修改则需要修改 deploy/docker-compose/docker-compose.yml
+mkdir mysql
+
 # 修改/web/src/utils/crypto/index.ts 文件,将公钥更新上去如下
 const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
 	"MIIBCgKCAQEAh6ahoQ6x42ds+vVK8uVYt2tWHJ2+P/yDNwboSadkDJoR8XWqO7bZ\n" +

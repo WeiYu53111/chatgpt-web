@@ -19,12 +19,12 @@ export function deCrypto(data: string) {
 
 
 const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
-	"MIIBCgKCAQEAh6ahoQ6x42ds+vVK8uVYt2tWHJ2+P/yDNwboSadkDJoR8XWqO7bZ\n" +
-	"iAalONDVOHByhCRUC8Iakbsequs343A7ON7odnbPBmgNTsLONOVad5EcNBEAsHNo\n" +
-	"3KuWRfFBokWs5TgzqezBIyTj7TiQzNiHcLzTXxt59T4ACsturH22Ph0JlRMjK5Cu\n" +
-	"6SBcWWC0lBk2kCqaIw/l7c2xai6Q3b70EldkxijlaqjM3TJlm9cZbgPa71MrWXpS\n" +
-	"61TmsFdMpVJ9q7v4dVymEyv4RGoQR4MYau9xGHUT27LZJT4QTliM5ZN9Pn0nni6t\n" +
-	"V2ASS7kG4S3PvL03epg/ynTU1vsCuREfXQIDAQAB\n" +
+	"MIIBCgKCAQEArS2xbGwG19DGhf/kyEuBKgLmC38Akv36QuKTLNg/Gls43OrEQEUY\n" +
+	"TlPU03IWlHfECbqwCWi/lxGTq1DL/mX5sX30qJbHH6QbivUYihTNPBWPAd7yi7KU\n" +
+	"nC9LlVQOLY21a174j88h65wCeD3pMtAm5Ts0MNESMfglEC9rozu+xJFlidjlHlor\n" +
+	"Rdg1ma8nDyRENFuxMAKp+wrR7VTTNLtERYt32hlybAT8OhTzDwjZLvfFqdjoxdbC\n" +
+	"tkkGcO+bJTXcTPCW6CgLqvAvqv1U+P+FWxwqBesDxwJC41XU1fvtWZjMIhhEe2It\n" +
+	"obIXp2t96Ic5xE4yMuhFYzIRKPYqxrCLWwIDAQAB\n" +
 	"-----END RSA PUBLIC KEY-----";
 // 创建 JSEncrypt 实例
 const encryptor = new JSEncrypt();
