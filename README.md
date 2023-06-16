@@ -13,6 +13,16 @@ git clone https://github.com/WeiYu53111/chatgpt-web.git
 cd chatgpt-web
 chmod +x ./start-compose.sh
 
+# 修改/web/src/utils/crypto/index.ts 文件,将公钥更新上去如下
+const pub_key = "-----BEGIN RSA PUBLIC KEY-----\n" +
+	"MIIBCgKCAQEAh6ahoQ6x42ds+vVK8uVYt2tWHJ2+P/yDNwboSadkDJoR8XWqO7bZ\n" +
+	"iAalONDVOHByhCRUC8Iakbsequs343A7ON7odnbPBmgNTsLONOVad5EcNBEAsHNo\n" +
+	"3KuWRfFBokWs5TgzqezBIyTj7TiQzNiHcLzTXxt59T4ACsturH22Ph0JlRMjK5Cu\n" +
+	"6SBcWWC0lBk2kCqaIw/l7c2xai6Q3b70EldkxijlaqjM3TJlm9cZbgPa71MrWXpS\n" +
+	"61TmsFdMpVJ9q7v4dVymEyv4RGoQR4MYau9xGHUT27LZJT4QTliM5ZN9Pn0nni6t\n" +
+	"V2ASS7kG4S3PvL03epg/ynTU1vsCuREfXQIDAQAB\n" +
+	"-----END RSA PUBLIC KEY-----";
+
 # 将私钥以及.env 配置文件放到 server目录下
 ...
 

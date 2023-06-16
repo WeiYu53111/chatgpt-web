@@ -13,7 +13,6 @@ import { StatService } from '../stat/stat.service';
 import { isNotEmptyString } from '../util/is';
 import { sendResponse } from '../util';
 import { ApiModel } from './types';
-import { Observable } from 'rxjs';
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 export const importDynamic = new Function(

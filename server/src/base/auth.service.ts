@@ -1,7 +1,7 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import * as jsonwebtoken from 'jsonwebtoken';
-import {AppConfigService} from "../config/app-config.service";
+import { AppConfigService } from '../config/app-config.service';
 import NodeRSA from 'node-rsa';
 const secret = 'Qwe123!@#';
 const encoding = 'utf-8';
@@ -11,16 +11,14 @@ export interface Payload {
 
 @Injectable()
 export class AuthService {
+  key: any = null;
 
-  key :any = null;
-
-  constructor(private readonly appConfigService: AppConfigService){
-      const pri_key = this.appConfigService.getPrivateKey();
-      this.key = new NodeRSA(pri_key, 'pkcs1-private-pem', {
+  constructor(private readonly appConfigService: AppConfigService) {
+    const pri_key = this.appConfigService.getPrivateKey();
+    this.key = new NodeRSA(pri_key, 'pkcs1-private-pem', {
       encryptionScheme: 'pkcs1',
     });
   }
-
 
   async generateToken(payload: Payload): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -64,16 +62,10 @@ export class AuthService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-
-  rsaDecode(content: string):string {
+  rsaDecode(content: string): string {
     //const decoder = new TextDecoder(encoding); // 创建解码器
-     // 解密得到字节数组
+    // 解密得到字节数组
     //const plaintext = decoder.decode(decryptedData); // 将字节数组按指定编码转换为字符串
     return this.key.decrypt(content, 'utf8');
   }
-
-
-
-
-
 }

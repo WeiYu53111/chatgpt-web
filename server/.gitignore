@@ -27,6 +27,12 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
+# 私钥
+*.pri
+
+#
+*.env
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
