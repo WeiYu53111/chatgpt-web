@@ -56,7 +56,7 @@
 							:disabled="registerInfo.email === null"
 							@click="handleValidateButtonClick"
 						>
-							注册
+							修改
 						</NButton>
 					</div>
 				</NCol>
