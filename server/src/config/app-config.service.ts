@@ -1,10 +1,16 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
+import * as fs from 'fs';
 
 @Injectable()
 export class AppConfigService {
 
+    private rsaKey :string = "";
+
     constructor(private readonly configService: ConfigService) {
+        const paht = this.configService.get<string>('RSA_FILE');
+        this.rsaKey = fs.readFileSync(paht).toString();
+
     }
     public getDatabase(): string {
         return this.configService.get<string>('DATABASE_NAME');
@@ -49,6 +55,10 @@ export class AppConfigService {
 
     public getUserLimit(): number {
         return this.configService.get<number>('USER_LIMIT')|| 10;
+    }
+
+    public getPrivateKey(): string {
+        return this.rsaKey;
     }
 
 }

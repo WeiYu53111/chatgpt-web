@@ -4,7 +4,6 @@ import { UserLoginDto, UserRegisterDto } from './dto/user.dto';
 import { Response } from '../interface/response.interface';
 import { AuthService } from '../base/auth.service';
 import { EmailService } from '../base/email.service';
-import { rsa_decode } from '../util/common';
 
 @Controller('user')
 export class UserController {
@@ -21,7 +20,7 @@ export class UserController {
     //base64解码
     const decodedString = atob(userDto.password);
     //RSA解密
-    const newPw = rsa_decode(decodedString);
+    const newPw = this.authService.rsaDecode(decodedString);
     userDto.password = newPw;
     const user = await this.userService.findUser(userDto);
     if (user) {
@@ -62,7 +61,7 @@ export class UserController {
       //base64解码
       const decodedString = atob(userDto.password);
       //RSA解密
-      const newPw = rsa_decode(decodedString);
+      const newPw = this.authService.rsaDecode(decodedString);
       userDto.password = newPw;
       const result: any = await this.userService.createUser(userDto);
       return Promise.resolve({
@@ -93,7 +92,7 @@ export class UserController {
     //base64解码
     const decodedString = atob(userDto.password);
     //RSA解密
-    const newPw = rsa_decode(decodedString);
+    const newPw = this.authService.rsaDecode(decodedString);
     userDto.password = newPw;
     this.logger.log('base64:' + userDto.password);
     this.logger.log('rsa:' + decodedString);
