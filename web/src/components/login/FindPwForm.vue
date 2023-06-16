@@ -70,7 +70,7 @@
 
 import {defineComponent, ref} from 'vue'
 import { isSuccess} from '@/utils/functions'
-import {register, resetPw, Response, sendEmailCode, UserInfo} from '@/api/user'
+import { resetPw, Response, sendEmailCode, UserInfo} from '@/api/user'
 import {
 	FormInst,
 	FormItemInst,

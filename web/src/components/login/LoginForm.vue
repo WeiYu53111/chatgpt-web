@@ -21,7 +21,7 @@
 					<NCol :span="24">
 						<div style="display: flex; : space-between; align-items: center;">
 							<div style="flex-grow: 1;">
-								<NButton text="true" style="margin-left: 5px" @click="toFindPassword">
+								<NButton text style="margin-left: 5px" @click="toFindPassword">
 									忘记密码
 								</NButton>
 							</div>
