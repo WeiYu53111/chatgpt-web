@@ -14,7 +14,7 @@
 					<NInput
 						v-model:value="userInfo.password"
 						type="password"
-						@keydown.enter.prevent
+						@keydown.enter="handleValidateButtonClick"
 					/>
 				</NFormItem>
 				<NRow :gutter="[0, 24]">
