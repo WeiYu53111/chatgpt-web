@@ -14,7 +14,7 @@
 					<NInput
 						v-model:value="userInfo.password"
 						type="password"
-						@keydown.enter="handleValidateButtonClick"
+						@keydown.enter="enteryKey"
 					/>
 				</NFormItem>
 				<NRow :gutter="[0, 24]">
@@ -82,7 +82,38 @@ export default defineComponent({
 			return !!modelRef.value.password && modelRef.value.password.length > 3
 		}
 
-		async function handleValidateButtonClick(e: MouseEvent) {
+
+
+		async function enteryKey(e: KeyboardEvent ) {
+			e.preventDefault()
+			formRef.value?.validate((errors) => {
+				if (!errors) {
+					//发起请求
+					login<Response>(modelRef.value).then(
+						(res) => {
+							if (isSuccess(res)) {
+								const data = res.data as unknown as Token
+								const store = useTokenStore()
+								store.setToken(data.token)
+								message.success("登录成功,正在前往聊天室.")
+								router.push("/room")
+							} else {
+								message.error(`登录失败: ${res.message ?? 'error'}`)
+							}
+						},
+						(errors=> {
+							message.error(`登录失败: ${errors.message ?? 'error'}`)
+						})
+					).catch((error) => {
+						message.error(error.message ?? 'error')
+					})
+				}
+			})
+		}
+
+
+
+		async function handleValidateButtonClick(e: MouseEvent):Promise<void> {
 			e.preventDefault()
 			formRef.value?.validate((errors) => {
 				if (!errors) {
@@ -138,6 +169,7 @@ export default defineComponent({
 			userInfo: modelRef,
 			rules,
 			handleValidateButtonClick,
+			enteryKey,
 			toRegister,
 			toFindPassword
 		}

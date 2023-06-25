@@ -12,15 +12,8 @@
 	right: 10px;
 	bottom: 20px;
 	border-radius: 6px;
-	box-shadow: 1px 2px 2px rgb(0, 0, 0, 0.3), 0px -1px 2px rgb(0, 0, 0, 0.3);
+	box-shadow: 1px 2px 2px rgb(0, 0, 0, 0.3), 0 -1px 2px rgb(0, 0, 0, 0.3);
 }
-
-.line {
-	height: 350px;
-	width: 1px;
-	background: black;
-}
-
 
 .set_info_name {
 	position: absolute;
@@ -48,11 +41,6 @@
 	color: black;
 }
 
-.set_info_price2 {
-	position: relative;
-	font-size: 15px;
-	color: black;
-}
 
 .buy {
 	position: absolute;
