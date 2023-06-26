@@ -27,7 +27,7 @@ export class StatService {
         const stats = await this.statRepository.find(
             {
                 where:{squad_date:today},
-                order:{ email: "ASC"}
+                order:{ squad_date:"DESC", query_count:"DESC",email: "ASC",}
             }
         )
         const res = []
