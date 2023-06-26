@@ -125,4 +125,5 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const data = props.data;
 </script>
