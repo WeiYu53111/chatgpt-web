@@ -1,5 +1,5 @@
 # build front-end
-FROM node:18.16 AS frontend
+FROM node:18.16.0-alpine3.18 AS frontend
 
 RUN npm config set registry https://registry.npmmirror.com
 RUN npm install pnpm -g
