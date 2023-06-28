@@ -47,7 +47,7 @@ export class UserService {
   public async findAllUser(): Promise<User[]> {
     return this.usersRepository.find({
       order: {
-        email: 'asc',
+        last_login_time: 'desc',
       },
     });
   }

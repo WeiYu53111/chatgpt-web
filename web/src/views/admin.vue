@@ -22,8 +22,10 @@
 					/>
 			</NLayoutSider>
 			<NLayout>
-<!--				<router-view></router-view>-->
-				<UserList class="px-8"></UserList>
+				<div class="px-8">
+					<router-view></router-view>
+				</div>
+<!--				<UserList ></UserList>-->
 			</NLayout>
 		</NLayout>
 	</div>
@@ -43,6 +45,8 @@ import type { MenuOption } from 'naive-ui'
 import {
 	Body as UserIcon,
 } from '@vicons/ionicons5'
+//import {useRouter} from "vue-router";
+import {router} from "@/router";
 
 function renderIcon (icon: Component) {
 	return () => h(NIcon, null, { default: () => h(icon) })
@@ -50,10 +54,18 @@ function renderIcon (icon: Component) {
 
 const menuOptions: MenuOption[] = [
 	{
-		label: '用户统计',
+		label: '用户今日访问情况',
 		key: 'userinfo',
 		icon: renderIcon(UserIcon)
+	},
+	{
+
+		label: '用户历史访问情况',
+		key: 'user_history',
+		icon: renderIcon(UserIcon)
 	}
+
+
 ]
 
 export default defineComponent({
@@ -70,8 +82,19 @@ export default defineComponent({
 			collapsed: ref(false),
 			menuOptions,
 			handleUpdateValue (key: string, item: MenuOption) {
+
 				//this.$router.push("/admin/"+key);
-				console.log("/admin/"+key)
+				console.log(key)
+				if(key === "userinfo"){
+					console.log("展示用户今日访问情况")
+					router.push("/admin/user_now")
+				}else{
+					console.log("展示用户历史访问情况")
+					router.push("/admin/user_his")
+
+				}
+
+
 			}
 		}
 	}

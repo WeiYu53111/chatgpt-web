@@ -1,6 +1,6 @@
 <template>
 	<div class="mb-6">
-		<NTag size="large"> 用户今日访问情况 </NTag>
+		<NTag size="large"> 用户历史访问情况 </NTag>
 	</div>
 	<NSpace :size="12" vertical>
 		<NDataTable
@@ -15,8 +15,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import {NButton,NSpace,NDataTable} from "naive-ui";
-import {getAllUserData, UserData} from "@/api/user"
+import {getAllUserHisData, UserHisData} from "@/api/user"
 const columns = [
+	{
+		title: '日期',
+		key: 'squad_date',
+		/*defaultSortOrder: 'ascend',
+		sorter: 'default'*/
+	},
 	{
 		title: '账号',
 		key: 'email',
@@ -25,29 +31,11 @@ const columns = [
 		sorter: 'default'*/
 	},
 	{
-		title: '注册时间',
-		key: 'create_time',
-		/*defaultSortOrder: 'ascend',
-		sorter: 'default'*/
-	},
-	{
-		title: '最后登录时间',
-		key: 'last_login_time',
-		/*defaultSortOrder: 'ascend',
-		sorter: 'default'*/
-	},
-	{
-		title: '今日已提问次数',
+		title: '提问次数',
 		key: 'usage',
 		/*defaultSortOrder: 'ascend',
 		sorter: 'default'*/
-	},
-	{
-		title: '可用额度',
-		key: 'limit',
-		/*defaultSortOrder: 'ascend',
-		sorter: 'default'*/
-	},
+	}
 ]
 
 export default defineComponent({
@@ -56,18 +44,16 @@ export default defineComponent({
 	},
 	setup () {
 		const tableRef = ref(null)
-		const tmpdata : UserData[]  = []
+		const tmpdata : UserHisData[]  = []
 		const tableData = ref(tmpdata);
 		async function initData(){
-			const originData = await getAllUserData();
+			const originData = await getAllUserHisData();
 			for (let i = 0; i < originData.length; i++) {
 				const one = originData[i]
 				tableData.value.push({
+					squad_date: one.squad_date,
 					email: one.email,
-					create_time: one.create_time,
-					last_login_time : one.last_login_time,
 					usage: one.usage,
-					limit: one.limit
 				})
 			}
 		}

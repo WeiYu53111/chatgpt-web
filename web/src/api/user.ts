@@ -28,6 +28,12 @@ export interface UserData {
 	limit:number
 }
 
+export interface UserHisData {
+	squad_date:string,
+	email:string,
+	usage:number
+}
+
 /**
  * 登录
  * @param data
@@ -123,6 +129,17 @@ export async function getAllUserData():Promise<UserData[]> {
 	const data = res.data as unknown as UserData[]
 	return  Promise.resolve(data);
 }
+
+export async function getAllUserHisData():Promise<UserHisData[]> {
+	const res = await post<Response>({
+		url: '/stat/user_his_data',
+		data: {
+		}
+	});
+	const data = res.data as unknown as UserHisData[]
+	return  Promise.resolve(data);
+}
+
 
 
 export interface UserRoute {

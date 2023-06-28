@@ -31,12 +31,12 @@ const routes: RouteRecordRaw[] = [
 		component: () => import('@/views/user/FindPW.vue'),
 	},
 
-	{
+	/*{
 		path: '/buy',
 		name: 'buy',
 		meta: { skipCheck: true },
 		component: () => import('@/views/buy/vip.vue'),
-	},
+	},*/
 	{
     path: '/room',
     name: 'room',
@@ -53,9 +53,23 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 	{
-		path: '/mana',
-		name: 'mana',
+		path: '/admin',
+		name: 'admin',
+		meta: { requiresAuth: true },// 添加元信息，表示该页面需要认证
 		component: () => import('@/views/admin.vue'),
+		children: [
+			{
+				path: '/admin/user_now',
+				alias: "",
+				name: 'now',
+				component: () => import('@/views/user/UserList.vue'),
+			},
+			{
+				path: '/admin/user_his',
+				name: 'his',
+				component: () => import('@/views/user/UserHisList.vue'),
+			},
+		],
 	},
   {
     path: '/404',
