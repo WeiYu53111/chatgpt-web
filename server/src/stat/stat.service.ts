@@ -28,12 +28,13 @@ export class StatService {
       order: { email: 'ASC' },
     });
     const res = [];
-    const stat_index = 0;
+    let stat_index = 0;
     let query_count = 0;
     for (let i = 0; i < users.length; i++) {
       //stat可能为空
       if (stats[stat_index] && users[i].email === stats[stat_index].email) {
         query_count = stats[stat_index].query_count;
+        stat_index += 1;
       } else {
         query_count = 0;
       }

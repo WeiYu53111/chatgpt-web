@@ -4,10 +4,11 @@ import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
 import List from './List.vue'
 import Footer from './Footer.vue'
-import { useAppStore, useChatStore } from '@/store'
+import { useAppStore, useChatStore,useMenuStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
-
+import Menu from "@/components/login/Menu.vue";
+const menuStore =useMenuStore()
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
@@ -15,6 +16,7 @@ const { isMobile } = useBasicLayout()
 const show = ref(false)
 
 const collapsed = computed(() => appStore.siderCollapsed)
+
 
 function handleAdd() {
   chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
@@ -58,6 +60,8 @@ watch(
 </script>
 
 <template>
+	<Menu class="side-menu" v-show="menuStore.isOpen">
+	</Menu>
   <NLayoutSider
     :collapsed="collapsed"
     :collapsed-width="0"
@@ -93,3 +97,17 @@ watch(
   </template>
   <PromptStore v-model:visible="show" />
 </template>
+
+
+<style scoped>
+
+.side-menu {
+	height: 120px;
+	position: absolute;
+	z-index: 100;
+	bottom:40px;
+	left: 16px;
+}
+
+
+</style>

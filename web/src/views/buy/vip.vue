@@ -33,8 +33,6 @@ const vipPackages = [
 </script>
 
 <template>
-
-
 		<div class="flex justify-center items-center h-full flex-row flex-wrap">
 			<VipPackage v-for="(data, index) in vipPackages" :key="index" :data="data" />
 		</div>

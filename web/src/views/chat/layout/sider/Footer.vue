@@ -1,11 +1,12 @@
 <script setup lang='ts'>
-//import { defineAsyncComponent, ref } from 'vue'
-import {computed} from 'vue'
+//import { defineAsyncComponent} from 'vue'
+import {computed , ref } from 'vue'
 import { SvgIcon, UserAvatar } from '@/components/common'
 import LogOutButton from "@/views/chat/layout/sider/LogOutButton.vue";
 import {Theme} from "@/store/modules/app/helper";
-import {useAppStore} from "@/store";
+import {useAppStore,useMenuStore} from "@/store";
 import { NButton } from "naive-ui";
+//import {position} from "html2canvas/dist/types/css/property-descriptors/position";
 
 //const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
 
@@ -26,14 +27,21 @@ const themeOptions: { label: string; key: Theme; icon: string }[] = [
 	},
 ]
 
+const menuStore = useMenuStore()
+function showMenu(event :MouseEvent) {
+	menuStore.change(!menuStore.isOpen)
+	const mouseX = event.clientX;
+	const mouseY = event.clientY;
+	console.log(mouseY + "," +mouseX)
+}
+
 </script>
 
 <template>
   <footer class="flex items-center justify-between min-w-0 p-4 overflow-hidden border-t dark:border-neutral-800">
-    <div class="flex-1 flex-shrink-0 overflow-hidden">
-      <UserAvatar />
+    <div class="flex-1 flex-shrink-0 overflow-hidden pointer" @click="showMenu">
+				<UserAvatar style="cursor: pointer"/>
     </div>
-
 
 			<template v-for="item of themeOptions" :key="item.key">
 				<NButton
