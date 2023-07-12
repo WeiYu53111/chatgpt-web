@@ -141,27 +141,14 @@ export async function getAllUserHisData():Promise<UserHisData[]> {
 }
 
 
-
-export interface UserRoute {
-	path: string,
-	component: string
-}
-
-export async function getRoute(name:string):Promise<UserRoute[]|null>{
+export async function getMenus(token:string):Promise<string[]|null>{
 	/*const res = await post<Response>({
 		url: '/user/route'
 	});
 	const data = res.data as unknown as UserRoute*/
-	let data = null
-
-	if(name==="admin"){
-		data = [{
-			path: "/admin",
-			component: ""
-		}]
-	}else{
-		data = null
-	}
-
+	let data = [
+		"admin",
+		"buy"
+	]
 	return  Promise.resolve(data);
 }

@@ -57,6 +57,7 @@ export const useTokenStore = defineStore('tokenStore',{
 			if(this.getToken && this.getIsVaild){
 				return true
 			}else{
+				this.clearToken()
 				return false
 			}
 		},

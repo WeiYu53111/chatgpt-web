@@ -1,10 +1,8 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 import { NLayout, NLayoutContent } from 'naive-ui'
-import { useRouter } from 'vue-router'
+import {RouteRecordRaw, useRouter} from 'vue-router'
 import Sider from './sider/index.vue'
-//import Permission from './Permission.vue'
-//import PageHeader from "@/views/chat/layout/header/PageHeader.vue";
 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore,  useChatStore } from '@/store'
@@ -15,12 +13,9 @@ const chatStore = useChatStore()
 //const authStore = useAuthStore()
 
 router.replace({ name: 'Chat', params: { uuid: chatStore.active } })
-
 const { isMobile } = useBasicLayout()
 
 const collapsed = computed(() => appStore.siderCollapsed)
-
-//const needPermission = computed(() => !!authStore.session?.auth && !authStore.token)
 
 const getMobileClass = computed(() => {
   if (isMobile.value)
@@ -34,24 +29,6 @@ const getContainerClass = computed(() => {
     { 'pl-[260px]': !isMobile.value && !collapsed.value },
   ]
 })
-/*
-
-//动态添加路由
-await getRoute("admin").then(
-	(rs:UserRoute[]|null)=>{
-		if(rs){
-			for (let i = 0; i <rs.length; i++) {
-				router.addRoute({
-					path: rs[i].path,
-					component: () => import('@/views/'+"admin"+'.vue')
-				})
-			}
-		}
-	}
-)
-*/
-
-
 
 </script>
 

@@ -1,10 +1,9 @@
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import {createRouter, createWebHistory} from 'vue-router'
-//import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 
-import { useTokenStore } from '@/store'
+import {useMenuStore, useTokenStore} from '@/store'
 
 const routes: RouteRecordRaw[] = [
 
@@ -30,13 +29,6 @@ const routes: RouteRecordRaw[] = [
 		meta: { skipCheck: true },
 		component: () => import('@/views/user/FindPW.vue'),
 	},
-
-	/*{
-		path: '/buy',
-		name: 'buy',
-		meta: { skipCheck: true },
-		component: () => import('@/views/buy/vip.vue'),
-	},*/
 	{
     path: '/room',
     name: 'room',
@@ -52,25 +44,7 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-	{
-		path: '/admin',
-		name: 'admin',
-		meta: { requiresAuth: true },// 添加元信息，表示该页面需要认证
-		component: () => import('@/views/admin.vue'),
-		children: [
-			{
-				path: '/admin/user_now',
-				alias: "",
-				name: 'now',
-				component: () => import('@/views/user/UserList.vue'),
-			},
-			{
-				path: '/admin/user_his',
-				name: 'his',
-				component: () => import('@/views/user/UserHisList.vue'),
-			},
-		],
-	},
+
   {
     path: '/404',
     name: '404',
@@ -84,14 +58,52 @@ const routes: RouteRecordRaw[] = [
 		meta: { skipCheck: true },
     component: () => import('@/views/exception/500/index.vue'),
   },
-
-  {
+  /*{
     path: '/:pathMatch(.*)*',
     name: 'notFound',
 		meta: { skipCheck: true },
     redirect: '/404',
-  },
+  },*/
 ]
+
+;
+const dynamicsRoutes: Map<string,RouteRecordRaw> =  new Map<string, RouteRecordRaw>();
+dynamicsRoutes.set("admin",{
+	path: '/admin',
+	name: 'admin',
+	meta: { requiresAuth: true },// 添加元信息，表示该页面需要认证
+	component: () => import('@/views/admin.vue'),
+	children: [
+		{
+			path: '/admin/user_now',
+			alias: "",
+			name: 'now',
+			component: () => import('@/views/user/UserList.vue'),
+		},
+		{
+			path: '/admin/user_his',
+			name: 'his',
+			component: () => import('@/views/user/UserHisList.vue'),
+		},
+	],
+});
+dynamicsRoutes.set("buy",{
+	path: '/buy',
+	name: 'buy',
+	meta: { skipCheck: true },
+	component: () => import('@/views/buy/vip.vue'),
+});
+
+
+function dynamicAddRoutes(menus:string[]) {
+	for (const menuName of menus)  {
+		const record = dynamicsRoutes.get(menuName)
+		if(record){
+			router.addRoute(record)
+		}
+	}
+
+}
 
 export const router = createRouter({
   //history: createWebHashHistory(),
@@ -109,6 +121,22 @@ router.beforeEach(async(to, from, next) => {
 		try {
 			const store = useTokenStore()
 			if(store.isLogin()){
+				const menuStore = useMenuStore()
+				// 没有添加路由
+
+				console.log(menuStore.addFlag)
+				if(!menuStore.addFlag){
+					const menus = await menuStore.getMenu(store.token)
+					if(menus){
+						console.log("动态添加菜单")
+						dynamicAddRoutes(menus)
+						menuStore.add()
+					}
+				}
+				console.log(menuStore.addFlag)
+				console.log(router.getRoutes())
+
+
 				const originPath =to.path
 				if(originPath === "/login" || originPath === "/register"){
 					next({name:"room"})
