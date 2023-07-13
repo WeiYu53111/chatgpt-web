@@ -58,12 +58,7 @@ const routes: RouteRecordRaw[] = [
 		meta: { skipCheck: true },
     component: () => import('@/views/exception/500/index.vue'),
   },
-  /*{
-    path: '/:pathMatch(.*)*',
-    name: 'notFound',
-		meta: { skipCheck: true },
-    redirect: '/404',
-  },*/
+
 ]
 
 ;
@@ -102,7 +97,12 @@ function dynamicAddRoutes(menus:string[]) {
 			router.addRoute(record)
 		}
 	}
-
+	router.addRoute({
+		path: '/:pathMatch(.*)*',
+		name: 'notFound',
+		meta: { skipCheck: true },
+		redirect: '/404',
+	})
 }
 
 export const router = createRouter({
@@ -115,6 +115,8 @@ export const router = createRouter({
 //setupMyPageGuard(router)
 
 router.beforeEach(async(to, from, next) => {
+	console.log(to)
+	console.log(from)
 	if(to.meta.skipCheck === true){
 		next()
 	}else{
@@ -123,25 +125,20 @@ router.beforeEach(async(to, from, next) => {
 			if(store.isLogin()){
 				const menuStore = useMenuStore()
 				// 没有添加路由
-
-				console.log(menuStore.addFlag)
 				if(!menuStore.addFlag){
 					const menus = await menuStore.getMenu(store.token)
 					if(menus){
-						console.log("动态添加菜单")
 						dynamicAddRoutes(menus)
 						menuStore.add()
+						next({path:to.path,replace:true})
 					}
-				}
-				console.log(menuStore.addFlag)
-				console.log(router.getRoutes())
-
-
-				const originPath =to.path
-				if(originPath === "/login" || originPath === "/register"){
-					next({name:"room"})
 				}else{
-					next()
+					const originPath =to.path
+					if(originPath === "/login" || originPath === "/register"){
+						next({name:"room"})
+					}else{
+						next()
+					}
 				}
 			}else{
 				const originPath = to.path

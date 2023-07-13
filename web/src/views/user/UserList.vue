@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import {NButton,NSpace,NDataTable} from "naive-ui";
+import {NButton,NTag,NSpace,NDataTable} from "naive-ui";
 import {getAllUserData, UserData} from "@/api/user"
 const columns = [
 	{
@@ -52,7 +52,7 @@ const columns = [
 
 export default defineComponent({
 	components:{
-		NButton,NSpace,NDataTable
+		NButton,NSpace,NDataTable,NTag
 	},
 	setup () {
 		const tableRef = ref(null)
