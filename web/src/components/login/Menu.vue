@@ -3,12 +3,22 @@
 import {router} from "@/router";
 import { useTheme } from '@/hooks/useTheme'
 import {NIcon} from "naive-ui";
-import {BatteryCharging, Home} from "@vicons/ionicons5";
+import {BatteryCharging} from "@vicons/ionicons5";
 const { theme, themeOverrides } = useTheme()
 
 function goto(path:string) {
+	alert(path)
 	router.push(path)
 }
+
+
+let routeInfos = [
+	{name:"/vip",
+		icon:""
+	},
+	{name:"/admin"}
+
+]
 
 </script>
 
@@ -16,23 +26,11 @@ function goto(path:string) {
 <div class="menu">
 	<div class="menu-body" :class="[theme ? 'el-body-dark' : 'el-body-white']">
 		<div class="option-box">
-			<div class="menu-option" @click="goto('admin')">
+			<div class="menu-option" v-for="(data, index) in routeInfos" :key="index" >
 				<div class="menu-icon">
-					<NIcon :component="Home" :depth="1" class="cursor-pointer" size="45" @click="goto('vip')"></NIcon>
+					<NIcon :component="BatteryCharging" :depth="1" class="cursor-pointer" size="45" @click="goto(data.name)"></NIcon>
 				</div>
 				<span class="menu-name">个人中心</span>
-			</div>
-			<div class="menu-option" @click="goto('admin')">
-				<div class="menu-icon">
-					<NIcon :component="BatteryCharging" :depth="1" class="cursor-pointer" size="45" @click="goto('vip')"></NIcon>
-				</div>
-				<span class="menu-name">冲冲冲</span>
-			</div>
-			<div class="menu-option" @click="goto('admin')">
-				<div class="menu-icon">
-					<NIcon :component="BatteryCharging" :depth="1" class="cursor-pointer" size="45" @click="goto('vip')"></NIcon>
-				</div>
-				<span class="menu-name">冲冲冲</span>
 			</div>
 <!--			<div class="menu-option"></div>
 			<div class="menu-option"></div>-->
