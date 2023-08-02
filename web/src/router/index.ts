@@ -159,6 +159,4 @@ router.beforeEach(async(to, from, next) => {
 export async function setupRouter(app: App) {
   app.use(router)
   await router.isReady()
-
-
 }
