@@ -1,5 +1,6 @@
 import {post} from "@/utils/request";
 import {rsaEncode} from "@/utils/crypto";
+import {RouteInfo} from "@/router";
 
 
 export interface Response {
@@ -141,14 +142,11 @@ export async function getAllUserHisData():Promise<UserHisData[]> {
 }
 
 
-export async function getMenus(token:string):Promise<string[]|null>{
-	/*const res = await post<Response>({
+export async function getMenus(token:string):Promise<RouteInfo[]>{
+	const res = await post<Response>({
 		url: '/user/route'
 	});
-	const data = res.data as unknown as UserRoute*/
-	let data = [
-		"admin",
-		"buy"
-	]
+	const data = res.data as unknown as RouteInfo[]
+	console.log(data)
 	return  Promise.resolve(data);
 }

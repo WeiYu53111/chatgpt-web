@@ -61,7 +61,6 @@ const routes: RouteRecordRaw[] = [
 
 ]
 
-;
 const dynamicsRoutes: Map<string,RouteRecordRaw> =  new Map<string, RouteRecordRaw>();
 dynamicsRoutes.set("admin",{
 	path: '/admin',
@@ -90,11 +89,22 @@ dynamicsRoutes.set("buy",{
 });
 
 
-function dynamicAddRoutes(menus:string[]) {
-	for (const menuName of menus)  {
-		const record = dynamicsRoutes.get(menuName)
+
+export interface RouteInfo {
+	path:string
+	icon:string
+	routeName:string
+	menuName:string
+}
+
+export const menus:RouteInfo[] = [];
+
+function dynamicAddRoutes(routeInfos:RouteInfo[]) {
+	for (const routeInfo of routeInfos)  {
+		const record = dynamicsRoutes.get(routeInfo.routeName)
 		if(record){
 			router.addRoute(record)
+			menus.push(routeInfo)
 		}
 	}
 	router.addRoute({
@@ -115,8 +125,6 @@ export const router = createRouter({
 //setupMyPageGuard(router)
 
 router.beforeEach(async(to, from, next) => {
-	console.log(to)
-	console.log(from)
 	if(to.meta.skipCheck === true){
 		next()
 	}else{

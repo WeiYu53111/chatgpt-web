@@ -4,6 +4,7 @@ import { UserLoginDto, UserRegisterDto } from './dto/user.dto';
 import { Response } from '../interface/response.interface';
 import { AuthService } from '../base/auth.service';
 import { EmailService } from '../base/email.service';
+import {Request} from "express";
 
 @Controller('user')
 export class UserController {
@@ -47,6 +48,36 @@ export class UserController {
       return Promise.resolve(resData);
     }
   }
+
+  @Post('/route')
+  async getRoutes(@Req() req: Request): Promise<Response> {
+
+    const res = [
+      {
+        menuName:"充值",
+        routeName:"buy",
+        path:"/buy"
+      }
+    ]
+    const email = req['userInfo'].email;
+
+    if(email === "admin@qq.com"){
+      res.push(
+          {
+            menuName:"后台",
+            routeName:"admin",
+            path:"/admin"
+          }
+      )
+    }
+    const resData = {
+      data: res,
+      message: '',
+      status: 'Success',
+    };
+    return Promise.resolve(resData);
+  }
+
 
   @Post('new')
   public async register(@Body() userDto: UserRegisterDto): Promise<Response> {

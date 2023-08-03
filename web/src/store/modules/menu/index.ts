@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import { ref} from 'vue'
 import {getMenus} from "@/api/user";
+import {RouteInfo} from "@/router";
 export const useMenuStore =
 	defineStore('MenuStore', () => {
 		const isOpen = ref(false)
@@ -10,7 +11,7 @@ export const useMenuStore =
 			//console.log(isOpen.value)
 		}
 
-		async function getMenu(token:string|null):Promise<string[]|null> {
+		async function getMenu(token:string|null):Promise<RouteInfo[]|null> {
 			if(!token){
 				return null
 			}
@@ -23,3 +24,4 @@ export const useMenuStore =
 
 		return {change, isOpen,getMenu,add,addFlag}
 	})
+

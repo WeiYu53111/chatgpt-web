@@ -24,6 +24,7 @@ const vipPackages = [
 		price: '99.9',
 		features: [
 			{ text: '200次' },
+			{ text: '不限次数' },
 			{ text: '不限次数' }
 		]
 	},

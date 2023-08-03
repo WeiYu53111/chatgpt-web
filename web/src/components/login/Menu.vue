@@ -1,24 +1,14 @@
 <script setup lang="ts">
 
-import {router} from "@/router";
+import {router,menus} from "@/router";
 import { useTheme } from '@/hooks/useTheme'
 import {NIcon} from "naive-ui";
 import {BatteryCharging} from "@vicons/ionicons5";
 const { theme, themeOverrides } = useTheme()
 
 function goto(path:string) {
-	alert(path)
 	router.push(path)
 }
-
-
-let routeInfos = [
-	{name:"/vip",
-		icon:""
-	},
-	{name:"/admin"}
-
-]
 
 </script>
 
@@ -26,11 +16,11 @@ let routeInfos = [
 <div class="menu">
 	<div class="menu-body" :class="[theme ? 'el-body-dark' : 'el-body-white']">
 		<div class="option-box">
-			<div class="menu-option" v-for="(data, index) in routeInfos" :key="index" >
+			<div class="menu-option" v-for="(data, index) in menus" :key="index" >
 				<div class="menu-icon">
-					<NIcon :component="BatteryCharging" :depth="1" class="cursor-pointer" size="45" @click="goto(data.name)"></NIcon>
+					<NIcon :component="BatteryCharging" :depth="1" class="cursor-pointer" size="45" @click="goto(data.path)"></NIcon>
 				</div>
-				<span class="menu-name">个人中心</span>
+				<span class="menu-name">{{data.menuName}}</span>
 			</div>
 <!--			<div class="menu-option"></div>
 			<div class="menu-option"></div>-->
