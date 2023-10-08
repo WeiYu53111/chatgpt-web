@@ -21,6 +21,8 @@ services:
     image: nest:v0.1
     ports:
       - '9998:3002'
+    volumes:
+      - ./server.env:/app/dist/.env
     depends_on:
       - db
     networks:
