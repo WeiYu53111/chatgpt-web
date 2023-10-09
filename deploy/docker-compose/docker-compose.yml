@@ -37,6 +37,7 @@ services:
     networks:
       - gptnet
     volumes:
+      - ./web.env:/app/dist/.env
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - server
